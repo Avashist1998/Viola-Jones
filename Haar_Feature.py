@@ -13,12 +13,12 @@ def intergal_image(image):
     [row,col,dem] = image.shape
     i_image = image
     if (dem == 1):
-        for i in range(0,row-1):
-            for j in range(0,col-1):
+        for i in range(0,row):
+            for j in range(0,col):
                 i_image[i,j,0] = sum(sum(image[0:i+1,0:j+1,0]))
     else:
-        for i in range(0,row-1):
-            for j in range(0,col-1):
+        for i in range(0,row):
+            for j in range(0,col):
                 i_image[i,j,0] = sum(sum(image[0:i+1,0:j+1,0]))
                 i_image[i,j,1] = sum(sum(image[0:i+1,0:j+1,1]))
                 i_image[i,j,2] = sum(sum(image[0:i+1,0:j+1,2]))
