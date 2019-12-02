@@ -19,21 +19,30 @@ def feature_extraction(image):
     image_copy = image.copy()
     feature = []
     [row, col] = image_copy.shape
+<<<<<<< HEAD
     # Type 1 features (two vertical)
+=======
+    # Type 1 features (Horizonatal)
+>>>>>>> a255342196d62859508112ea8cff15d11250a451
     for w in range(1,4):
         for h in range(1,8):
             for i in range(row-h): 
                 for j in range(col-2*w):
                     output = -2*image_copy[i+h-1,j+w-1] + 2*image_copy[i,j+w-1] + image_copy[i+h-1,j+2*w-1] + image_copy[i+h-1,j] + image_copy[i,j+2*w-1] - image_copy[i,j]
                     feature.append(output)
+<<<<<<< HEAD
     print(len(feature))
     #Type 2 features (two horizontal)
+=======
+    #Type 2 features (Vertical)
+>>>>>>> a255342196d62859508112ea8cff15d11250a451
     for h in range(1,4):
         for w in range(1,8):
             for i in range(row-2*h): 
                 for j in range(col-w):
                     output = 2*image_copy[i+h-1,j] + image_copy[i+2*h-1,j+w-1] + image_copy[i,j+w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i+2*h-1,j] - image_copy[i,j]
                     feature.append(output)
+<<<<<<< HEAD
     print(len(feature))
     # Type 3 feature (three Horizonatal)
     for h in range(1,3):
@@ -61,6 +70,12 @@ def feature_extraction(image):
     print(len(feature))
     return feature
 
+=======
+    return feature
+
+
+
+>>>>>>> a255342196d62859508112ea8cff15d11250a451
 
 base_path  =  os.getcwd()
 test_faces_list = os.listdir(base_path+ '/dataset/testset/faces')
@@ -69,6 +84,10 @@ test = cv2.imread( base_path + "/dataset/trainset/faces/face00001.png",cv2.IMREA
 image = intergal_image(test)
 plt.figure
 plt.imshow(test)
+<<<<<<< HEAD
 #plt.show()
+=======
+plt.show()
+>>>>>>> a255342196d62859508112ea8cff15d11250a451
 f = feature_extraction(image)
 print('Completed')
