@@ -6,6 +6,7 @@ import glob
 import numpy as np 
 import matplotlib.pyplot as plt
 import pandas as pd 
+import time
 # Setting up a assigning the label to the images
 # get the base path of the directory
 def intergal_image(image):
@@ -52,8 +53,8 @@ def feature_extraction(image):
                     feature.append(output)
     print(len(feature))
     # Type 5 feature (four)
-    for h in range(1,4):
-        for w in range(1,4):
+    for h in range(1,5):
+        for w in range(1,5):
             for i in range(row-2*h+1): 
                 for j in range(col-2*w+1):
                     output = image_copy[i,j]+ 4*image_copy[i+h-1,j+w-1] - 2*image_copy[i,j+w-1] - 2*image_copy[i+h-1,j] + image[i+2*h-1,j+2*w-1] - 2*image_copy[i+h-1,j+2*w-1] + image_copy[i,j+2*w-1] - 2*image_copy[i+2*h-1,j+w-1] + image_copy[i+2*h-1,j]
@@ -91,12 +92,12 @@ label_non_faces = [0] * len(train_non_faces_files)
 label = np.append(label,label_non_faces)
 total_data = np.concatenate((data,temp_data),axis=0)
 final = np.insert(total_data, num_feature ,label,axis=1)
-final.tofile(base_path + 'train_data.csv',sep=',',format='%10.5f')
-#pd.DataFrame((final).astype(int)).to_csv(base_path+ "/train_data.csv",header=None, index=None)
+#final.tofile(base_path + 'train_data.csv',sep=',',format='%10.5f')
+pd.DataFrame((final).astype(int)).to_csv(base_path+ "/train_data.csv",header=None, index=None,float_format= '%10.5f')
 t1 = time.time()
 print((t1-t0)/60)
 
-
+# test code needs to be deleted 
 test  = np.array([1]*(19**2)).reshape(19,19)
 feature = []
 i_image = intergal_image(test)
