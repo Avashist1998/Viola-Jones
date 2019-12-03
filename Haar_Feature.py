@@ -19,75 +19,94 @@ def feature_extraction(image):
     image_copy = image.copy()
     feature = []
     [row, col] = image_copy.shape
-<<<<<<< HEAD
     # Type 1 features (two vertical)
-=======
-    # Type 1 features (Horizonatal)
->>>>>>> a255342196d62859508112ea8cff15d11250a451
-    for w in range(1,4):
-        for h in range(1,8):
-            for i in range(row-h): 
-                for j in range(col-2*w):
+    for w in range(1,5):
+        for h in range(1,9):
+            for i in range(row-h+1): 
+                for j in range(col-2*w+1):
                     output = -2*image_copy[i+h-1,j+w-1] + 2*image_copy[i,j+w-1] + image_copy[i+h-1,j+2*w-1] + image_copy[i+h-1,j] + image_copy[i,j+2*w-1] - image_copy[i,j]
                     feature.append(output)
-<<<<<<< HEAD
     print(len(feature))
     #Type 2 features (two horizontal)
-=======
-    #Type 2 features (Vertical)
->>>>>>> a255342196d62859508112ea8cff15d11250a451
-    for h in range(1,4):
-        for w in range(1,8):
-            for i in range(row-2*h): 
-                for j in range(col-w):
+    for h in range(1,5):
+        for w in range(1,9):
+            for i in range(row-2*h+1): 
+                for j in range(col-w+1):
                     output = 2*image_copy[i+h-1,j] + image_copy[i+2*h-1,j+w-1] + image_copy[i,j+w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i+2*h-1,j] - image_copy[i,j]
                     feature.append(output)
-<<<<<<< HEAD
     print(len(feature))
     # Type 3 feature (three Horizonatal)
     for h in range(1,3):
-        for w in range(1,8):
-            for i in range(row-3*h): 
-                for j in range(col-w):
-                    output = 2*image_copy[i+2*h-1,j+w-1] + 2*image_copy[i+h-1,j] - 2*image_copy[i+h-1,j+w-1] - 2*image_copy[i+2*h-1,j] - image_copy[i+3*h-1,j+w-1] + image_copy[i+3*h-1,j] - image_copy[i,j] + image_copy[i,j+w-1]
+        for w in range(1,9):
+            for i in range(row-4*h+1): 
+                for j in range(col-w+1):
+                    output = 2*image_copy[i+3*h-1,j+w-1] + 2*image_copy[i+h-1,j] - 2*image_copy[i+h-1,j+w-1] - 2*image_copy[i+3*h-1,j] - image_copy[i+4*h-1,j+w-1] + image_copy[i+4*h-1,j] - image_copy[i,j] + image_copy[i,j+w-1]
                     feature.append(output)
     print(len(feature))
     # Type 4 feature (two Vertical)
-    for h in range(1,8):
+    for h in range(1,9):
         for w in range(1,3):
-            for i in range(row-h): 
-                for j in range(col-3*w):
-                    output = 2*image_copy[i,j+w-1] + 2*image_copy[i+h-1,j+2*w-1] - 2*image_copy[i,j+2*w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i,j]+ image_copy[i+h-1,j] - image_copy[i+h-1,j+3*w-1] + image_copy[i,j+3*w-1]
+            for i in range(row-h+1): 
+                for j in range(col-4*w+1):
+                    output = 2*image_copy[i,j+w-1] + 2*image_copy[i+h-1,j+3*w-1] - 2*image_copy[i,j+3*w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i,j]+ image_copy[i+h-1,j] - image_copy[i+h-1,j+4*w-1] + image_copy[i,j+4*w-1]
                     feature.append(output)
     print(len(feature))
     # Type 5 feature (four)
     for h in range(1,4):
         for w in range(1,4):
-            for i in range(row-2*h): 
-                for j in range(col-2*w):
+            for i in range(row-2*h+1): 
+                for j in range(col-2*w+1):
                     output = image_copy[i,j]+ 4*image_copy[i+h-1,j+w-1] - 2*image_copy[i,j+w-1] - 2*image_copy[i+h-1,j] + image[i+2*h-1,j+2*w-1] - 2*image_copy[i+h-1,j+2*w-1] + image_copy[i,j+2*w-1] - 2*image_copy[i+2*h-1,j+w-1] + image_copy[i+2*h-1,j]
                     feature.append(output)
     print(len(feature))
     return feature
 
-=======
-    return feature
-
-
-
->>>>>>> a255342196d62859508112ea8cff15d11250a451
 
 base_path  =  os.getcwd()
-test_faces_list = os.listdir(base_path+ '/dataset/testset/faces')
-test_non_faces_list = os.listdir(base_path+ '/dataset/testset/non-faces')
-test = cv2.imread( base_path + "/dataset/trainset/faces/face00001.png",cv2.IMREAD_GRAYSCALE)
-image = intergal_image(test)
-plt.figure
-plt.imshow(test)
-<<<<<<< HEAD
-#plt.show()
-=======
-plt.show()
->>>>>>> a255342196d62859508112ea8cff15d11250a451
-f = feature_extraction(image)
-print('Completed')
+train_faces_files = glob.glob(base_path+ '/dataset/trainset/faces/*.png')
+train_faces_files.sort()
+train_non_faces_files = glob.glob(base_path+ '/dataset/trainset/non-faces/*.png')
+train_non_faces_files.sort()
+data = np.array([[]])
+t0 = time.time()
+for names in train_faces_files:
+    image = cv2.imread(names,cv2.IMREAD_GRAYSCALE)
+    i_image = intergal_image(image)
+    f = feature_extraction(i_image)
+    data = np.append(data,f)
+
+num_feature = 17565
+num_image = int(len(data)/num_feature)
+data = np.resize(data, (num_image,num_feature))
+temp_data = np.array([[]])
+for names in train_non_faces_files:
+    image = cv2.imread(names,cv2.IMREAD_GRAYSCALE)
+    i_image = intergal_image(image)
+    f = feature_extraction(i_image)
+    temp_data = np.append(temp_data,f)
+num_image = int(len(temp_data)/num_feature)
+temp_data = np.resize(temp_data, (num_image,num_feature))
+label = [1]*len(train_faces_files)
+label_non_faces = [0] * len(train_non_faces_files)
+label = np.append(label,label_non_faces)
+total_data = np.concatenate((data,temp_data),axis=0)
+final = np.insert(total_data, num_feature ,label,axis=1)
+final.tofile(base_path + 'train_data.csv',sep=',',format='%10.5f')
+#pd.DataFrame((final).astype(int)).to_csv(base_path+ "/train_data.csv",header=None, index=None)
+t1 = time.time()
+print((t1-t0)/60)
+
+
+test  = np.array([1]*(19**2)).reshape(19,19)
+feature = []
+i_image = intergal_image(test)
+image_copy = i_image
+[row, col] = test.shape
+# Type 1 features (two vertical)
+for w in range(1,10):
+    for h in range(1,20):
+        for i in range(row-h+1): 
+            for j in range(col-2*w+1):
+                output = -2*image_copy[i+h-1,j+w-1] + 2*image_copy[i,j+w-1] + image_copy[i+h-1,j+2*w-1] + image_copy[i+h-1,j] + image_copy[i,j+2*w-1] - image_copy[i,j]
+                feature.append(output)
+print(len(feature))
