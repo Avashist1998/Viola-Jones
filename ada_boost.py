@@ -11,7 +11,15 @@ def weight_cal(w,z,alpha,h,y):
     w_new = w/z
     return w_new
 
-def decision_stamp(S)
+def decision_stamp(S,Distribution)
+
+    col = []
+    for names in S:
+        col.append(str(names))
+    col[-1] = 'Label'
+    col = col + ['Distribution']
+    S = S.merge(pd.Series(Distribution).to_frame(), left_index=True, right_index=True)
+    S.columns = col 
     F_star = float('inf')
     for col in X.columns:
         X  = S.drop(columns = ['Label','Distribution'])
@@ -36,8 +44,12 @@ def decision_stamp(S)
 base_path  =  os.getcwd()
 train_df = pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 test_df = pd.read_csv((base_path+'/Data/test_data.csv'),header=None)
-train_X = train_df.drop(column = train_df.columns[-1])
+train_X = train_df.drop(columns = train_df.columns[-1])
 train_y = train_df[train_df.columns[-1]]
-test_X = train_df.drop(column = test_df.columns[-1])
+test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
+P_count = train_y[train_y == 1].count() 
+N_count = len(train_y) - P_count
+Distribution = np.array([1/(2*P_count)]*P_count + [1/(2*N_count)]*N_count)
+
 print('complete')
