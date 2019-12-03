@@ -40,7 +40,8 @@ def decision_stamp(S,Distribution)
                 theta_star= 0.5*((Xj.iloc[i] + Xj.iloc[i+1])[0])
                 j_star=col
     return(j_star,theta_star)
-
+def ada_boost(S,j_stra,theta_star):
+    return(12)
 base_path  =  os.getcwd()
 train_df = pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 test_df = pd.read_csv((base_path+'/Data/test_data.csv'),header=None)
