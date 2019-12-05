@@ -7,10 +7,12 @@ import matplotlib.pyplot as plt
 def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
     return beta
-def weight_cal(Distribution,beta,label,prediction):
-    e = int(prediction == label)
+def weight_cal(Distribution,label,prediction,error):
+    beta = beta_cal(error)
+    e = (prediction == label).astype(int)
     Distribution_new = Distribution*beta**(1-e)
-    return Distribution_new
+    Distribution_new = Distribution_new/sum(Distribution_new)
+    return Distribution_new,beta
 
 def decision_stamp(S,Distribution):
     col = []
@@ -42,24 +44,30 @@ def decision_stamp(S,Distribution):
                 j_star=col
     return(j_star,theta_star)
 
-def error_calcuator(kind,S,threshold,J):
-    prediction = int(S[J] >= threshold)
-    label = S['Label']
-    if (kind == 1):
-        error = sum(prediction != label)/len(label)
-    elif (kind == 2):
-        error_2 =  sum((prediction == -1)& (label == 1))/sum(label == 1)
-    else:
-        error_3 =  sum((prediction == 1)& (label == -1))/sum(label == -1)
-    return prediction,error,error_2,error_3
+def error_calcuator(prediction,label):
+    error = sum(prediction != label)/len(label)
+    error_2 =  sum((prediction == -1)& (label == 1))/sum(label == 1)
+    error_3 =  sum((prediction == 1)& (label == -1))/sum(label == -1)
+    return error,error_2,error_3
 
-def ada_boost(S,rounds):
-
-    alpha = np.array([0]*round)
-    e_t = np.round([0]*round)
+def ada_boost(S,y,Distribution,rounds):
+    beta = []
+    j_of_round = []
+    e_t = [[]]
+    theta = []
+    new_Distribution = Distribution
     for i in rounds:
-        print(i)
-    return(12)
+        [J_star,theta_star] = decision_stamp(S,new_Distribution)
+        prediction = 2*(S[int(j_star)]>=theta_star).astype(int) - 1 
+        [prediction,e1, e2,e3] = error_calcuator(prediction,y)
+        [new_Distribution,beta] = weight_cal(Distribution,y,prediction,e1)
+        beta.append()
+        j_of_round.append(j_star)
+        theta.append(theta_star)
+        e_t.append(np.array([e1,e2,e3]))
+        print(beta,j_of_round,e_t,theta,np.array([e1,e2,e3]))
+    return beta, j_of_round, e_t, theta
+
 base_path  =  os.getcwd()
 train_df = pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 test_df = pd.read_csv((base_path+'/Data/test_data.csv'),header=None)
@@ -71,8 +79,9 @@ P_count = train_y[train_y == 1].count()
 N_count = len(train_y) - P_count
 Distribution = np.array([1/(2*P_count)]*P_count + [1/(2*N_count)]*N_count)
 t0 = time.time()
-[j_star, theta_star] =  decision_stamp(train_X,Distribution)
+[j_star, theta_star] =  decision_stamp(train_X.iloc[:100],Distribution[:100])
 t1 = time.time()
 print(j_star,theta_star)
 print('complete')
 print(t1-t0)
+
