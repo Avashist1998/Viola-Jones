@@ -15,13 +15,7 @@ def weight_cal(Distribution,label,prediction,error):
     return Distribution_new,beta
 
 def decision_stamp(S,Distribution):
-    col = []
-    for names in S:
-        col.append(str(names))
-    col[-1] = 'Label'
-    col = col + ['Distribution']
-    S = S.merge(pd.Series(Distribution).to_frame(), left_index=True, right_index=True)
-    S.columns = col 
+    S['Distribution'].loc[:] = Distribution
     F_star = float('inf')
     X  = S.drop(columns = ['Label','Distribution'])
     for col in X.columns:
@@ -50,13 +44,13 @@ def error_calcuator(prediction,label):
     error_3 =  sum((prediction == 1)& (label == -1))/sum(label == -1)
     return error,error_2,error_3
 
-def ada_boost(S,y,Distribution,rounds):
+def ada_boost(S,y,rounds):
     beta = []
     j_of_round = []
     e_t = [[]]
     theta = []
-    new_Distribution = Distribution
-    for i in rounds:
+    new_Distribution = S['Distribution']
+    for i in range(0,rounds):
         [J_star,theta_star] = decision_stamp(S,new_Distribution)
         prediction = 2*(S[int(j_star)]>=theta_star).astype(int) - 1 
         [prediction,e1, e2,e3] = error_calcuator(prediction,y)
@@ -67,7 +61,19 @@ def ada_boost(S,y,Distribution,rounds):
         e_t.append(np.array([e1,e2,e3]))
         print(beta,j_of_round,e_t,theta,np.array([e1,e2,e3]))
     return beta, j_of_round, e_t, theta
-
+def df_maker(S):
+    col = []
+    for names in S.columns:
+        col.append(str(names))
+    col[-1] = 'Label'
+    col = col + ['Distribution']
+    train_y = S[S.columns[-1]]
+    P_count = train_y[train_y == 1].count() 
+    N_count = len(train_y) - P_count
+    Distribution = np.array([1/(2*P_count)]*P_count + [1/(2*N_count)]*N_count)
+    S = S.merge(pd.Series(Distribution).to_frame(), left_index=True, right_index=True)
+    S.columns = col
+    return S
 base_path  =  os.getcwd()
 train_df = pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 test_df = pd.read_csv((base_path+'/Data/test_data.csv'),header=None)
@@ -75,12 +81,10 @@ train_X = train_df.drop(columns = train_df.columns[-1])
 train_y = train_df[train_df.columns[-1]]
 test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
-P_count = train_y[train_y == 1].count() 
-N_count = len(train_y) - P_count
-Distribution = np.array([1/(2*P_count)]*P_count + [1/(2*N_count)]*N_count)
-t0 = time.time()
-[j_star, theta_star] =  decision_stamp(train_X.iloc[:100],Distribution[:100])
-t1 = time.time()
+train_df = df_maker(train_df)
+test_df = df_maker(test_df)
+[beta, j_of_round, e_t, theta] = ada_boost(train_df.iloc[:4],train_y.iloc[:4],1)
+#[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
 print(j_star,theta_star)
 print('complete')
 print(t1-t0)
