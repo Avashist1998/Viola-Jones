@@ -4,6 +4,7 @@ import numpy as np
 import os 
 import time
 import matplotlib.pyplot as plt
+t0 = time.time()
 def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
     return beta
@@ -14,53 +15,57 @@ def weight_cal(Distribution,label,prediction,error):
     Distribution_new = Distribution_new/sum(Distribution_new)
     return Distribution_new,beta
 
-def decision_stamp(S,Distribution):
-    S['Distribution'].loc[:] = Distribution
+def decision_stamp(S_orignal,Distribution):
+    S = S_orignal.copy()
+    (S['Distribution'].loc[:])[:]  = Distribution
     F_star = float('inf')
     X  = S.drop(columns = ['Label','Distribution'])
-    for col in X.columns:
-        X  = S.drop(columns = ['Label','Distribution'])
-        Xj = S.sort_values(by = col)
-        Xj = Xj.reset_index(drop=True)
-        Yj =  Xj['Label']
-        Dj =  Xj['Distribution'] 
-        Xj =  Xj.drop(columns = Xj.columns[col != Xj.columns])
+    X_np = np.array(X)
+    S_np = np.array(S)
+    [row,col] = X_np.shape
+    for j in range(col):
+        X_np  = S_np[:,:-2]
+        X_np_j = S_np[S_np[:,j].argsort()]
+        Yj =  X_np_j[:,-2]
+        Dj =  X_np_j[:,-1]
+        Xj =  X_np_j[:,j]
         F = sum(Dj[Yj == 1])
         if F< F_star:
             F_star = F
-            theta_star = (Xj.iloc[0])[0] -1 
+            theta_star = Xj[0]-1
             j_star = col  
-        for i in range(0,len(Xj)-1):
-            F = F - Yj.iloc[i]*Dj.iloc[i]
-            if ((F<F_star) &  (Xj.iloc[i] != Xj.iloc[i+1])[0]):
+        for i in range(0,row-1):
+            F = F - Yj[i]*Dj[i]
+            if ((F<F_star) &  (Xj[i] != Xj[i+1])):
                 F_star = F
-                theta_star= 0.5*((Xj.iloc[i] + Xj.iloc[i+1])[0])
-                j_star=col
+                theta_star= 0.5*((Xj[i] + Xj[i+1]))
+                j_star=j
     return(j_star,theta_star)
 
 def error_calcuator(prediction,label):
     error = sum(prediction != label)/len(label)
-    error_2 =  sum((prediction == -1)& (label == 1))/sum(label == 1)
-    error_3 =  sum((prediction == 1)& (label == -1))/sum(label == -1)
+    error_2 =  sum((prediction == -1)& (label == 1))/len(label)
+    error_3 =  sum((prediction == 1)& (label == -1))/len(label)
     return error,error_2,error_3
 
 def ada_boost(S,y,rounds):
-    beta = []
+    beta_list = []
     j_of_round = []
-    e_t = [[]]
+    e_t = []
     theta = []
     new_Distribution = S['Distribution']
     for i in range(0,rounds):
         [J_star,theta_star] = decision_stamp(S,new_Distribution)
-        prediction = 2*(S[int(j_star)]>=theta_star).astype(int) - 1 
-        [prediction,e1, e2,e3] = error_calcuator(prediction,y)
-        [new_Distribution,beta] = weight_cal(Distribution,y,prediction,e1)
-        beta.append()
-        j_of_round.append(j_star)
+        prediction = 2*(S[S.columns[J_star]]>=theta_star).astype(int) - 1 
+        [e1, e2,e3] = error_calcuator(prediction,y)
+        [new_Distribution,beta] = weight_cal(new_Distribution,y,prediction,e1)
+        beta_list.append(beta)
+        j_of_round.append(J_star)
         theta.append(theta_star)
-        e_t.append(np.array([e1,e2,e3]))
-        print(beta,j_of_round,e_t,theta,np.array([e1,e2,e3]))
-    return beta, j_of_round, e_t, theta
+        e_t.append([e1,e2,e3])
+    e_t = np.array(e_t)
+    e_t.resize(rounds,3)
+    return beta_list, j_of_round, e_t, theta
 def df_maker(S):
     col = []
     for names in S.columns:
@@ -83,9 +88,13 @@ test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
 train_df = df_maker(train_df)
 test_df = df_maker(test_df)
-[beta, j_of_round, e_t, theta] = ada_boost(train_df.iloc[:4],train_y.iloc[:4],1)
+print('time was ', time.time()-t0)
+[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,5)
+A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2]})
+A.to_csv("/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/10_round_results.csv", index=None,float_format= '%10.5f')
+print('time was ', time.time()-t0)
 #[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
-print(j_star,theta_star)
+print(J_star,theta_star)
 print('complete')
-print(t1-t0)
+
 

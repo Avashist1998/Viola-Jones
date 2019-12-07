@@ -1,123 +1,94 @@
-# The goal of the file to perform the feature extraction using the Haar_Features. 
-# I hoping to define the function in this file and worry about the rest later.
-import cv2
-import os
-import glob 
-import numpy as np 
-import matplotlib.pyplot as plt
+# the goal of the file is to develop the ada_boost algorithm 
 import pandas as pd 
+import numpy as np 
+import os 
 import time
-# Setting up a assigning the label to the images
-# get the base path of the directory
-def intergal_image(image):
-    [row,col] = image.shape
-    i_image = image.copy()
-    for i in range(0,row):
-        for j in range(0,col):
-            i_image[i,j] = sum(sum(image[0:i+1,0:j+1]))
-    return i_image
-def feature_extraction(image):
-    image_copy = image.copy()
-    feature = []
-    name = []
-    [row, col] = image_copy.shape
-    # Type 1 features (two vertical)
-    for w in range(1,5):
-        for h in range(1,9):
-            for i in range(row-h+1): 
-                for j in range(col-2*w+1):
-                    output = -2*image_copy[i+h-1,j+w-1] + 2*image_copy[i,j+w-1] + image_copy[i+h-1,j+2*w-1] + image_copy[i+h-1,j] + image_copy[i,j+2*w-1] - image_copy[i,j]
-                    feature.append(output)
-                    name.append('w = '+str(w)+' h = '+str(h)+' i = ' + str(i)+ ' j = ' + str(j))
-    print(len(feature))
-    #Type 2 features (two horizontal)
-    for h in range(1,5):
-        for w in range(1,9):
-            for i in range(row-2*h+1): 
-                for j in range(col-w+1):
-                    output = 2*image_copy[i+h-1,j] + image_copy[i+2*h-1,j+w-1] + image_copy[i,j+w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i+2*h-1,j] - image_copy[i,j]
-                    feature.append(output)
-                    name.append('w = '+str(w)+' h = '+str(h)+' i = ' + str(i)+ ' j = ' + str(j))
-    print(len(feature))
-    # Type 3 feature (three Horizonatal)
-    for h in range(1,3):
-        for w in range(1,9):
-            for i in range(row-4*h+1): 
-                for j in range(col-w+1):
-                    output = 2*image_copy[i+3*h-1,j+w-1] + 2*image_copy[i+h-1,j] - 2*image_copy[i+h-1,j+w-1] - 2*image_copy[i+3*h-1,j] - image_copy[i+4*h-1,j+w-1] + image_copy[i+4*h-1,j] - image_copy[i,j] + image_copy[i,j+w-1]
-                    feature.append(output)
-                    name.append('w = '+str(w)+' h = '+str(h)+' i = ' + str(i)+ ' j = ' + str(j))
-    print(len(feature))
-    # Type 4 feature (two Vertical)
-    for h in range(1,9):
-        for w in range(1,3):
-            for i in range(row-h+1): 
-                for j in range(col-4*w+1):
-                    output = 2*image_copy[i,j+w-1] + 2*image_copy[i+h-1,j+3*w-1] - 2*image_copy[i,j+3*w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i,j]+ image_copy[i+h-1,j] - image_copy[i+h-1,j+4*w-1] + image_copy[i,j+4*w-1]
-                    feature.append(output)
-                    name.append('w = '+str(w)+' h = '+str(h)+' i = ' + str(i)+ ' j = ' + str(j))
-    print(len(feature))
-    # Type 5 feature (four)
-    for h in range(1,5):
-        for w in range(1,5):
-            for i in range(row-2*h+1): 
-                for j in range(col-2*w+1):
-                    output = image_copy[i,j]+ 4*image_copy[i+h-1,j+w-1] - 2*image_copy[i,j+w-1] - 2*image_copy[i+h-1,j] + image[i+2*h-1,j+2*w-1] - 2*image_copy[i+h-1,j+2*w-1] + image_copy[i,j+2*w-1] - 2*image_copy[i+2*h-1,j+w-1] + image_copy[i+2*h-1,j]
-                    feature.append(output)
-                    name.append('w = '+str(w)+' h = '+str(h)+' i =' + str(i)+ ' j =' + str(j))
-    print(len(feature))
-    return feature, name
-'''
-def decision_stamp(S,Distribution):
-    col = []
-    for names in S:
-        col.append(str(names))
-    col[-1] = 'Label'
-    col = col + ['Distribution']
-    S = S.merge(pd.Series(Distribution).to_frame(), left_index=True, right_index=True)
-    S.columns = col 
+import matplotlib.pyplot as plt
+
+def beta_cal(epsolon):
+    beta = 1/((1-epsolon)/epsolon)
+    return beta
+def weight_cal(Distribution,label,prediction,error):
+    beta = beta_cal(error)
+    e = (prediction == label).astype(int)
+    Distribution_new = Distribution*beta**(1-e)
+    Distribution_new = Distribution_new/sum(Distribution_new)
+    return Distribution_new,beta
+
+def decision_stamp(S_orignal,Distribution):
+    S = S_orignal.copy()
+    (S['Distribution'].loc[:])[:]  = Distribution
     F_star = float('inf')
     X  = S.drop(columns = ['Label','Distribution'])
-    for col in X.columns:
-        X  = S.drop(columns = ['Label','Distribution'])
-        Xj = S.sort_values(by = col)
-        Xj = Xj.reset_index(drop=True)
-        Yj = Xj['Label']
-        Dj = Xj['Distribution'] 
-        Xj = Xj.drop(columns = Xj.columns[col != Xj.columns])
+    X_np = np.array(X)
+    S_np = np.array(S)
+    [row,col] = X_np.shape
+    for j in range(col):
+        X_np  = S_np[:,:-2]
+        X_np_j = S_np[S_np[:,j].argsort()]
+        Yj =  X_np_j[:,-2]
+        Dj =  X_np_j[:,-1]
+        Xj =  X_np_j[:,j]
         F = sum(Dj[Yj == 1])
         if F< F_star:
             F_star = F
-            theta_star = (Xj.iloc[0])[0] -1 
+            theta_star = Xj[0]-1
             j_star = col  
-        for i in range(0,len(Xj)-1):
-            F = F - Yj.iloc[i]*Dj.iloc[i]
-            if ((F<F_star) &  (Xj.iloc[i] != Xj.iloc[i+1])[0]):
+        for i in range(0,row-1):
+            F = F - Yj[i]*Dj[i]
+            if ((F<F_star) &  (Xj[i] != Xj[i+1])):
                 F_star = F
-                theta_star= 0.5*((Xj.iloc[i] + Xj.iloc[i+1])[0])
-                j_star=col
+                theta_star= 0.5*((Xj[i] + Xj[i+1]))
+                j_star=j
     return(j_star,theta_star)
+
+def error_calcuator(prediction,label):
+    error = sum(prediction != label)/len(label)
+    #False negative
+    error_2 =  sum((prediction == -1)& (label == 1))/sum(label == 1)
+    #False Positive
+    error_3 =  sum((prediction == 1)& (label == -1))/sum(label == -1)
+    return error,error_2,error_3
+
+def ada_boost(S,y,rounds):
+    beta_list = []
+    j_of_round = []
+    e_t = []
+    theta = []
+    new_Distribution = S['Distribution']
+    for i in range(0,rounds):
+        [J_star,theta_star] = decision_stamp(S,new_Distribution)
+        prediction = 2*(S[S.columns[J_star]]>=theta_star).astype(int) - 1 
+        [e1, e2,e3] = error_calcuator(prediction,y)
+        [new_Distribution,beta] = weight_cal(new_Distribution,y,prediction,e1)
+        beta_list.append(beta)
+        j_of_round.append(J_star)
+        theta.append(theta_star)
+        e_t.append([e1,e2,e3])
+    e_t = np.array(e_t)
+    e_t.resize(rounds,3)
+    return beta_list, j_of_round, e_t, theta
+def df_maker(S):
+    col = []
+    for names in S.columns:
+        col.append(str(names))
+    col[-1] = 'Label'
+    col = col + ['Distribution']
+    train_y = S[S.columns[-1]]
+    P_count = train_y[train_y == 1].count() 
+    N_count = len(train_y) - P_count
+    Distribution = np.array([1/(2*P_count)]*P_count + [1/(2*N_count)]*N_count)
+    S = S.merge(pd.Series(Distribution).to_frame(), left_index=True, right_index=True)
+    S.columns = col
+    return S
 base_path  =  os.getcwd()
-train_df = pd.read_csv('Data/train_data.csv',header = None)
-test_df = pd.read_csv('Data/test_data.csv',header=None)
-print('done')
-train_X = train_df.drop(columns = train_df.columns[-1])
-train_y = train_df[train_df.columns[-1]]
-test_X = train_df.drop(columns = test_df.columns[-1])
-test_y = train_df[test_df.columns[-1]]
-P_count = train_y[train_y == 1].count() 
-N_count = len(train_y) - P_count
-Distribution = np.array([1/(2*P_count)]*P_count + [1/(2*N_count)]*N_count)
-t0 = time.time()
-[j_star, theta_star] =  decision_stamp(train_X.iloc[:10],Distribution[:10])
-t1 = time.time()
-print(j_star,theta_star)
-'''
-base_path  =  os.getcwd()
-a = np.array([1]*(19*19))
-a.resize(19,19)
-i_image = intergal_image(a)
-[feature, names] = feature_extraction(i_image)
-pd.DataFrame(names).to_csv(base_path+ "/features_names.csv",header=None, index=None)
-print(names[14227])
+train_df= pd.read_csv("/Users/abhay/Documents/Python/Dataset/Dataset_number_7.csv")
+
+train_X = train_df.drop(columns = train_df.columns[-2:])
+train_y = train_df[train_df.columns[-2]]
+print(train_y)
+[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,10)
+
+
+#[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
 print('complete')
