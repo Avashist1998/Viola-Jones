@@ -11,9 +11,10 @@ def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
     return beta
 def weight_cal(Distribution,label,prediction,error):
-    beta = beta_cal(error)
     e = (prediction == label).astype(int)
-    Distribution_new = Distribution*beta**(1-e)
+    epsolan = sum(Distribution*e)
+    beta = beta_cal(epsolan)
+    Distribution_new = Distribution*beta**e
     Distribution_new = Distribution_new/sum(Distribution_new)
     return Distribution_new,beta
 
@@ -35,24 +36,24 @@ def decision_stamp_search(list_data,F_star,row):
                 theta_star= 0.5*((Xj[i] + Xj[i+1]))
                 j_star=j
     return(j_star,theta_star)
-def parllel_sort(S_np,j,row,F_star):
+def parllel_sort(S_np,j,row):
     X_np  = S_np[:,:-2]
-    X_np_j = S_np[S_np[:,j].argsort()]
-    Yj =  X_np_j[:,-2]
-    Dj =  X_np_j[:,-1]
-    Xj =  X_np_j[:,j]
+    Sort = S_np[:,j].argsort()
+    Xj =  (S_np[:,j])[Sort]
+    Yj =  (S_np[:,-2])[Sort]
+    Dj = (S_np[:,-1])[Sort]   
     return(j,Xj,Yj,Dj)
     
-def decision_stamp(S_orignal,Distribution):
-    F_star = float('inf')
-    S = S_orignal.copy()
-    (S['Distribution'].loc[:])[:]  = Distribution
+def decision_stamp(S,Distribution):
     F_star = float('inf')
     X  = S.drop(columns = ['Label','Distribution'])
     S_np = np.array(S)
+    t0 = time.time()
+    S_np[:,-1] = Distribution
+    print(time.time()-t0)
     [row,col] = S_np.shape
     num_cores = multiprocessing.cpu_count()
-    processed_list = Parallel(n_jobs=num_cores,prefer = 'threads')(delayed(parllel_sort)(S_np,j,row,F_star) for j in range(col-2))
+    processed_list = Parallel(n_jobs=num_cores,prefer = 'threads')(delayed(parllel_sort)(S_np,j,row) for j in range(col-2))
     [j_star,theta_star] = decision_stamp_search(processed_list,F_star,row)
     return (j_star,theta_star)
 
@@ -67,10 +68,18 @@ def ada_boost(S,y,rounds):
     j_of_round = []
     e_t = []
     theta = []
+    parity_tol = []
     new_Distribution = S['Distribution']
     for i in range(0,rounds):
         [J_star,theta_star] = decision_stamp(S,new_Distribution)
-        prediction = 2*(S[S.columns[J_star]]>=theta_star).astype(int) - 1 
+        prediction = 2*(S[S.columns[J_star]]>=theta_star).astype(int) - 1
+        [e1, e2,e3] = error_calcuator(prediction,y)
+        if e1 <= 0.5:
+            parity = 1
+        else :
+            parity = -1
+            prediction = 2*(S[S.columns[J_star]]<=theta_star).astype(int) - 1
+        parity_tol.append(parity)
         [e1, e2,e3] = error_calcuator(prediction,y)
         [new_Distribution,beta] = weight_cal(new_Distribution,y,prediction,e1)
         beta_list.append(beta)
@@ -79,7 +88,7 @@ def ada_boost(S,y,rounds):
         e_t.append([e1,e2,e3])
     e_t = np.array(e_t)
     e_t.resize(rounds,3)
-    return beta_list, j_of_round, e_t, theta
+    return (beta_list, j_of_round, e_t, theta, parity_tol)
 def df_maker(S):
     col = []
     for names in S.columns:
@@ -104,12 +113,8 @@ train_df = df_maker(train_df)
 test_df = df_maker(test_df)
 print(time.time())
 print('time was ', time.time()-t0)
-[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,10)
-A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2]})
+[beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,10)
+A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol})
 A.to_csv("/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/10_round_results.csv", index=None,float_format= '%10.5f')
 print('time was ', time.time()-t0)
-#[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
-print(J_star,theta_star)
 print('complete')
-
-
