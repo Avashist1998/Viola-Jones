@@ -12,7 +12,7 @@ def beta_cal(epsolon):
     return beta
 def weight_cal(Distribution,label,prediction,error):
     e = (prediction == label).astype(int)
-    epsolan = sum(Distribution*e)
+    epsolan = sum(Distribution*(1-e))
     beta = beta_cal(epsolan)
     Distribution_new = Distribution*beta**e
     Distribution_new = Distribution_new/sum(Distribution_new)
@@ -50,7 +50,6 @@ def decision_stamp(S,Distribution):
     S_np = np.array(S)
     t0 = time.time()
     S_np[:,-1] = Distribution
-    print(time.time()-t0)
     [row,col] = S_np.shape
     num_cores = multiprocessing.cpu_count()
     processed_list = Parallel(n_jobs=num_cores,prefer = 'threads')(delayed(parllel_sort)(S_np,j,row) for j in range(col-2))
@@ -111,10 +110,7 @@ test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
 train_df = df_maker(train_df)
 test_df = df_maker(test_df)
-print(time.time())
-print('time was ', time.time()-t0)
 [beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,10)
 A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol})
 A.to_csv("/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/10_round_results.csv", index=None,float_format= '%10.5f')
-print('time was ', time.time()-t0)
 print('complete')
