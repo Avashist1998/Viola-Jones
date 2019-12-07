@@ -4,6 +4,8 @@ import numpy as np
 import os 
 import time
 import matplotlib.pyplot as plt
+import multiprocessing
+import 
 t0 = time.time()
 def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
@@ -15,25 +17,17 @@ def weight_cal(Distribution,label,prediction,error):
     Distribution_new = Distribution_new/sum(Distribution_new)
     return Distribution_new,beta
 
-def decision_stamp(S_orignal,Distribution):
-    S = S_orignal.copy()
-    (S['Distribution'].loc[:])[:]  = Distribution
-    F_star = float('inf')
-    X  = S.drop(columns = ['Label','Distribution'])
-    X_np = np.array(X)
-    S_np = np.array(S)
-    [row,col] = X_np.shape
-    for j in range(col):
-        X_np  = S_np[:,:-2]
-        X_np_j = S_np[S_np[:,j].argsort()]
-        Yj =  X_np_j[:,-2]
-        Dj =  X_np_j[:,-1]
-        Xj =  X_np_j[:,j]
+def decision_stamp_search(list_data,F_star,row):
+    for i in range(len(list_data)):
+        j = list_data[i][0]
+        Xj = list_data[i][1]
+        Yj = list_data[i][2]
+        Dj = list_data[i][3]
         F = sum(Dj[Yj == 1])
         if F< F_star:
             F_star = F
             theta_star = Xj[0]-1
-            j_star = col  
+            j_star = j 
         for i in range(0,row-1):
             F = F - Yj[i]*Dj[i]
             if ((F<F_star) &  (Xj[i] != Xj[i+1])):
@@ -41,6 +35,26 @@ def decision_stamp(S_orignal,Distribution):
                 theta_star= 0.5*((Xj[i] + Xj[i+1]))
                 j_star=j
     return(j_star,theta_star)
+def parllel_sort(S_np,j,row,F_star):
+    X_np  = S_np[:,:-2]
+    X_np_j = S_np[S_np[:,j].argsort()]
+    Yj =  X_np_j[:,-2]
+    Dj =  X_np_j[:,-1]
+    Xj =  X_np_j[:,j]
+    return(j,Xj,Yj,Dj)
+    
+def decision_stamp(S_orignal,Distribution):
+    F_star = float('inf')
+    S = S_orignal.copy()
+    (S['Distribution'].loc[:])[:]  = Distribution
+    F_star = float('inf')
+    X  = S.drop(columns = ['Label','Distribution'])
+    S_np = np.array(S)
+    [row,col] = S_np.shape
+    num_cores = multiprocessing.cpu_count()
+    processed_list = Parallel(n_jobs=num_cores)(delayed(parllel_sort)(S_np,j,row,F_star) for j in range(col-2))
+    [j_star,theta_star] = decision_stamp_search(processed_list,F_star,row)
+    return (j_star,theta_star)
 
 def error_calcuator(prediction,label):
     error = sum(prediction != label)/len(label)
@@ -89,7 +103,7 @@ test_y = train_df[test_df.columns[-1]]
 train_df = df_maker(train_df)
 test_df = df_maker(test_df)
 print('time was ', time.time()-t0)
-[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,5)
+[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,10)
 A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2]})
 A.to_csv("/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/10_round_results.csv", index=None,float_format= '%10.5f')
 print('time was ', time.time()-t0)
