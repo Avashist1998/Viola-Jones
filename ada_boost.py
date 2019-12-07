@@ -87,7 +87,7 @@ def ada_boost(S,y,rounds):
         e_t.append([e1,e2,e3])
     e_t = np.array(e_t)
     e_t.resize(rounds,3)
-    return (beta_list, j_of_round, e_t, theta, parity_tol)
+    return (np.array(beta_list), np.array(j_of_round), np.array(e_t), np.array(theta), np.array(parity_tol))
 def df_maker(S):
     col = []
     for names in S.columns:
@@ -101,6 +101,23 @@ def df_maker(S):
     S = S.merge(pd.Series(Distribution).to_frame(), left_index=True, right_index=True)
     S.columns = col
     return S
+def totoal_error(test_X,test_y,theta,parity_tol):
+    test_np_X = np.array(test_X)
+    test_np_y = np.array(test_y)
+    test_np_X[:,j_of_round[:]]
+    thresholed_total = (np.multiply(parity_tol,test_np_X[:,j_of_round[:]]) < np.multiply(parity_tol,theta)).astype(int)
+    predictions_total = []
+    combined_error = []
+    alpha = np.log(1/np.array(beta_list))
+    for i in range(1,len(alpha)+1):
+        prediction_t = (np.dot(thresholed_total[:,:i],alpha[:i]) >= 0.5*sum(alpha[:i])).astype(int)
+        predictions_total.append(prediction_t)
+    predictions_total = np.array(predictions_total)
+    sum_error = []
+    for i in range(len(alpha)):
+        sum_error.append(error_calcuator(2*predictions_total[i]-1,test_np_y))
+    sum_error = np.array(sum_error)
+    return(sum_error)
 base_path  =  os.getcwd()
 train_df = pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 test_df = pd.read_csv((base_path+'/Data/test_data.csv'),header=None)
@@ -111,6 +128,9 @@ test_y = train_df[test_df.columns[-1]]
 train_df = df_maker(train_df)
 test_df = df_maker(test_df)
 [beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,10)
-A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol})
+features_names = pd.read_csv(base_path+'/features_names.csv',header = None)
+J_names = (features_names.iloc[j_of_round])[0]
+sum_error = totoal_error(test_X,test_y,theta,parity_tol)
+A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol,'emprical_total':sum_error[:,0],'False Negative_total':sum_error[:,1],'False Positive_total':sum_error[:,2]})
 A.to_csv("/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/10_round_results.csv", index=None,float_format= '%10.5f')
 print('complete')
