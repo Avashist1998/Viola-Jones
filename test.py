@@ -81,12 +81,13 @@ def df_maker(S):
     return S
 base_path  =  os.getcwd()
 train_df= pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
-
+train_df = df_maker(train_df)
 train_X = train_df.drop(columns = train_df.columns[-2:])
+
 train_y = train_df[train_df.columns[-2]]
 print(train_y)
 t0  = time.time()
-[beta_list, j_of_round, e_t, theta] = ada_boost(train_df.iloc[:4],train_y.iloc[:4],1)
+[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,1)
 
 #[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
 print('Time is = ',time.time()-t0)
