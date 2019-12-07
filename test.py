@@ -35,12 +35,12 @@ def decision_stamp_search(list_data,F_star,row):
                 theta_star= 0.5*((Xj[i] + Xj[i+1]))
                 j_star=j
     return(j_star,theta_star)
-def parllel_sort(S_np,j,row,F_star):
+def parllel_sort(S_np,j,row):
     X_np  = S_np[:,:-2]
-    X_np_j = S_np[S_np[:,j].argsort()]
-    Yj =  X_np_j[:,-2]
-    Dj =  X_np_j[:,-1]
-    Xj =  X_np_j[:,j]
+    Sort = S_np[:,j].argsort()
+    Xj =  (S_np[:,j])[Sort]
+    Yj =  (S_np[:,-2])[Sort]
+    Dj = (S_np[:,-1])[Sort]   
     return(j,Xj,Yj,Dj)
     
 def decision_stamp(S_orignal,Distribution):
@@ -52,7 +52,7 @@ def decision_stamp(S_orignal,Distribution):
     S_np = np.array(S)
     [row,col] = S_np.shape
     num_cores = multiprocessing.cpu_count()
-    processed_list = Parallel(n_jobs=num_cores)(delayed(parllel_sort)(S_np,j,row,F_star) for j in range(col-2))
+    processed_list = Parallel(n_jobs=num_cores,prefer='threads')(delayed(parllel_sort)(S_np,j,row) for j in range(col-2))
     [j_star,theta_star] = decision_stamp_search(processed_list,F_star,row)
     return (j_star,theta_star)
 
@@ -99,9 +99,8 @@ train_df= pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 train_df = df_maker(train_df)
 train_X = train_df.drop(columns = train_df.columns[-2:])
 train_y = train_df[train_df.columns[-2]]
-print(train_y)
 t0  = time.time()
-[beta_list, j_of_round, e_t, theta] = ada_boost(train_df[:10],train_y.iloc[:10],1)
+[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,1)
 print('Time is = ',time.time()-t0)
 #[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
 

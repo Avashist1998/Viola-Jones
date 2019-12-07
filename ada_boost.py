@@ -5,7 +5,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 import multiprocessing
-import 
+from joblib import Parallel, delayed
 t0 = time.time()
 def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
@@ -52,7 +52,7 @@ def decision_stamp(S_orignal,Distribution):
     S_np = np.array(S)
     [row,col] = S_np.shape
     num_cores = multiprocessing.cpu_count()
-    processed_list = Parallel(n_jobs=num_cores)(delayed(parllel_sort)(S_np,j,row,F_star) for j in range(col-2))
+    processed_list = Parallel(n_jobs=num_cores,prefer = 'threads')(delayed(parllel_sort)(S_np,j,row,F_star) for j in range(col-2))
     [j_star,theta_star] = decision_stamp_search(processed_list,F_star,row)
     return (j_star,theta_star)
 
@@ -102,6 +102,7 @@ test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
 train_df = df_maker(train_df)
 test_df = df_maker(test_df)
+print(time.time())
 print('time was ', time.time()-t0)
 [beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,10)
 A = pd.DataFrame({'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2]})
