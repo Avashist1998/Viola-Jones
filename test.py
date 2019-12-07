@@ -4,7 +4,7 @@ import numpy as np
 import os 
 import time
 import matplotlib.pyplot as plt
-
+t0 = time.time()
 def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
     return beta
@@ -44,9 +44,7 @@ def decision_stamp(S_orignal,Distribution):
 
 def error_calcuator(prediction,label):
     error = sum(prediction != label)/len(label)
-    #False negative
     error_2 =  sum((prediction == -1)& (label == 1))/len(label)
-    #False Positive
     error_3 =  sum((prediction == 1)& (label == -1))/len(label)
     return error,error_2,error_3
 
@@ -88,7 +86,7 @@ train_X = train_df.drop(columns = train_df.columns[-2:])
 train_y = train_df[train_df.columns[-2]]
 print(train_y)
 t0  = time.time()
-[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,1)
+[beta_list, j_of_round, e_t, theta] = ada_boost(train_df.iloc[:4],train_y.iloc[:4],1)
 
 #[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
 print('Time is = ',time.time()-t0)
