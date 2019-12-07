@@ -45,9 +45,9 @@ def decision_stamp(S_orignal,Distribution):
 def error_calcuator(prediction,label):
     error = sum(prediction != label)/len(label)
     #False negative
-    error_2 =  sum((prediction == -1)& (label == 1))/sum(label == 1)
+    error_2 =  sum((prediction == -1)& (label == 1))/len(label)
     #False Positive
-    error_3 =  sum((prediction == 1)& (label == -1))/sum(label == -1)
+    error_3 =  sum((prediction == 1)& (label == -1))/len(label)
     return error,error_2,error_3
 
 def ada_boost(S,y,rounds):
@@ -82,13 +82,13 @@ def df_maker(S):
     S.columns = col
     return S
 base_path  =  os.getcwd()
-train_df= pd.read_csv("/Users/abhay/Documents/Python/Dataset/Dataset_number_7.csv")
+train_df= pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 
 train_X = train_df.drop(columns = train_df.columns[-2:])
 train_y = train_df[train_df.columns[-2]]
 print(train_y)
-[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,10)
-
+t0  = time.time()
+[beta_list, j_of_round, e_t, theta] = ada_boost(train_df,train_y,1)
 
 #[j_star, theta_star] =  decision_stamp(train_X.iloc[:2],Distribution[:2])
-print('complete')
+print('Time is = ',time.time()-t0)
