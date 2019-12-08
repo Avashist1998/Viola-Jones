@@ -4,7 +4,7 @@ This is an implementation of the Viola-Jones Algorithm in python3. The results o
 The enviorment information 
 Language = Python3
 Packages 
-numpy, open-cv, mathplotlib, os, joblib, multiprocessing and pandas
+numpy, open-cv, mathplotlib, os, joblib, multiprocessing, glob, seaborn and pandas
 
 One can install these by using the following commands 
  numpy:   $ pip install numpy
@@ -14,9 +14,18 @@ One can install these by using the following commands
  joblib: $ pip install joblib
  os: $ pip install os
  pandas: $ pip install pandas 
+ glob $ pip install glob
+ seaborn $ pip install seaborn
 
 One can use the sudo if having trouble or view the documentation online
 
 # Operating system notes
 
 If someone is running the code on a windows machine. They will have to change the path that is used in all of the file because the program was written a Unix based machine. The program makes used of parrellelization to decrease excecution time, so when running on single core machine on may observe 4 time the excecution time posted on the report.  
+
+# Accessing Data Set
+One can download the data set from git by running git lfs. Please refer to git lfs documentation. If one can on download the feature file, one can run the Haar_feature.py to extract their own feature file. 
+
+# Files Information
+
+
