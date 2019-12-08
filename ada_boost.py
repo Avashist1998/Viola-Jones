@@ -131,6 +131,6 @@ test_df = df_maker(test_df)
 features_names = pd.read_csv(base_path+'/features_names.csv',header = None)
 J_names = (features_names.iloc[j_of_round])[0]
 sum_error = total_error(test_X,test_y,theta,parity_tol)
-A = pd.DataFrame({'round':np.arange(1, round+1, 1),'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol,'emprical_total':sum_error[:,0],'False Negative_total':sum_error[:,1],'False Positive_total':sum_error[:,2]})
-A.to_csv("/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/10_round_results.csv", index=None,float_format= '%10.5f')
+A = pd.DataFrame({'round':np.arange(1, rounds+1, 1),'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol,'emprical_total':sum_error[:,0],'False Negative_total':sum_error[:,1],'False Positive_total':sum_error[:,2]})
+A.to_csv('/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/'+ str(rounds)+'_round_results.csv', index=None,float_format= '%10.5f')
 print('complete')
