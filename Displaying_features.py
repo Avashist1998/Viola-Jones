@@ -1,14 +1,11 @@
-# the goal of the file is to develop the ada_boost algorithm 
+import glob
+import re
 import pandas as pd 
 import numpy as np 
 import os 
-import time
+import cv2
 import matplotlib.pyplot as plt
-import multiprocessing
-import cv2 
-from joblib import Parallel, delayed
-import glob
-import re
+
 base_path = os.getcwd()
 data = pd.read_csv(base_path+'/10_round_results.csv')
 image = cv2.imread((base_path+'/dataset/trainset/faces/face00001.png'),cv2.IMREAD_GRAYSCALE)
