@@ -58,7 +58,7 @@ def feature_extraction(image):
     
     return feature
 
-
+#---------------------------------------------------------------------------------------------------------------------
 base_path  =  os.getcwd()
 train_faces_files = glob.glob(base_path+ '/dataset/trainset/faces/*.png')
 train_faces_files.sort()
@@ -88,10 +88,11 @@ label_non_faces = [-1] * len(train_non_faces_files)
 label = np.append(label,label_non_faces)
 total_data = np.concatenate((data,temp_data),axis=0)
 final = np.insert(total_data, num_feature ,label,axis=1)
-#final.tofile(base_path + 'train_data.csv',sep=',',format='%10.5f')
 pd.DataFrame((final).astype(int)).to_csv(base_path+ "/train_data.csv",header=None, index=None,float_format= '%10.5f')
 t1 = time.time()
 print((t1-t0)/60)
+
+#---------------------------------------------------------------------------------------------------------------------
 # test file 
 train_faces_files = glob.glob(base_path+ '/dataset/testset/faces/*.png')
 train_faces_files.sort()
@@ -125,7 +126,7 @@ final = np.insert(total_data, num_feature ,label,axis=1)
 pd.DataFrame((final).astype(int)).to_csv(base_path+ "/test_data.csv",header=None, index=None,float_format= '%10.5f')
 t1 = time.time()
 print((t1-t0)/60)
-
+#---------------------------------------------------------------------------------------------------------------------
 '''
 # test code needs to be deleted 
 test  = np.array([1]*(19**2)).reshape(19,19)

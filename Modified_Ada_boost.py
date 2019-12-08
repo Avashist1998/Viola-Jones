@@ -1,4 +1,4 @@
-# the goal of the file is to develop the ada_boost algorithm 
+# modified adaboost to false positive and false negative into account
 import pandas as pd 
 import numpy as np 
 import os 
