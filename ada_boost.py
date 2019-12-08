@@ -119,6 +119,7 @@ def total_error(test_X,test_y,theta,parity_tol):
     sum_error = np.array(sum_error)
     return(sum_error)
 base_path  =  os.getcwd()
+rounds = 10
 train_df = pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
 test_df = pd.read_csv((base_path+'/Data/test_data.csv'),header=None)
 train_X = train_df.drop(columns = train_df.columns[-1])
@@ -127,7 +128,7 @@ test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
 train_df = df_maker(train_df)
 test_df = df_maker(test_df)
-[beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,40)
+[beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,rounds)
 features_names = pd.read_csv(base_path+'/features_names.csv',header = None)
 J_names = (features_names.iloc[j_of_round])[0]
 sum_error = total_error(test_X,test_y,theta,parity_tol)

@@ -16,7 +16,8 @@ def weight_cal(Distribution,label,prediction,error,gama):
     e = gama*e_p + (1-gama)*e_n
     epsolan = sum(Distribution*(1-(e_p+e_n)))
     beta = beta_cal(epsolan)
-    Distribution_new = (1-e)*Distribution*beta**(e_p+e_n)
+    Distribution_new = Distribution*beta**(e_p+e_n)
+    Distribution_new = gama*Distribution_new[1 == label] + (1-gama)*Distribution_new[-1 == label]
     Distribution_new = Distribution_new/sum(Distribution_new)
     print(sum(abs(Distribution_new-Distribution)))
     return Distribution_new,beta
@@ -130,21 +131,12 @@ test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
 train_df = df_maker(train_df)
 test_df = df_maker(test_df)
-gama = 0.2
-rounds = 5
-features_names = pd.read_csv(base_path+'/features_names.csv',header = None)
-
-[beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,rounds,gama)
-
-J_names = (features_names.iloc[j_of_round])[0]
-sum_error = total_error(test_X,test_y,theta,parity_tol)
-A = pd.DataFrame({'round':np.arange(1, rounds+1, 1),'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol,'emprical_total':sum_error[:,0],'False Negative_total':sum_error[:,1],'False Positive_total':sum_error[:,2]})
-A.to_csv('/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/'+str(rounds)+'_'+str(gama)+'_round_results.csv', index=None,float_format= '%10.5f')
-gama = 0.8
-[beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,5,gama)
-features_names = pd.read_csv(base_path+'/features_names.csv',header = None)
-J_names = (features_names.iloc[j_of_round])[0]
-sum_error = total_error(test_X,test_y,theta,parity_tol)
-A = pd.DataFrame({'round':np.arange(1, rounds+1, 1),'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol,'emprical_total':sum_error[:,0],'False Negative_total':sum_error[:,1],'False Positive_total':sum_error[:,2]})
-A.to_csv('/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/'+str(rounds)+'_'+str(gama)+'_round_results.csv', index=None,float_format= '%10.5f')
+rounds = 10
+for gama in [0.1,0.9,0.5]:
+    features_names = pd.read_csv(base_path+'/features_names.csv',header = None)
+    [beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,rounds,gama)
+    J_names = (features_names.iloc[j_of_round])[0]
+    sum_error = total_error(test_X,test_y,theta,parity_tol)
+    A = pd.DataFrame({'round':np.arange(1, rounds+1, 1),'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol,'emprical_total':sum_error[:,0],'False Negative_total':sum_error[:,1],'False Positive_total':sum_error[:,2]})
+    A.to_csv('/Users/abhay/Documents/GitHub/Viola-Jones_Algorithm/'+str(rounds)+'_'+str(gama)+'_round_results.csv', index=None,float_format= '%10.5f')
 print('complete')
