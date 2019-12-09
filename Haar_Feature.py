@@ -27,6 +27,7 @@ def feature_extraction(image):
                 for j in range(col-2*w+1):
                     output = -2*image_copy[i+h-1,j+w-1] + 2*image_copy[i,j+w-1] + image_copy[i+h-1,j+2*w-1] + image_copy[i+h-1,j] + image_copy[i,j+2*w-1] - image_copy[i,j]
                     feature.append(output)
+    print(len(feature))
     #Type 2 features (two horizontal)
     for h in range(1,5):
         for w in range(1,9):
@@ -34,6 +35,7 @@ def feature_extraction(image):
                 for j in range(col-w+1):
                     output = 2*image_copy[i+h-1,j] + image_copy[i+2*h-1,j+w-1] + image_copy[i,j+w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i+2*h-1,j] - image_copy[i,j]
                     feature.append(output)
+    print(len(feature))
     # Type 3 feature (three Horizonatal)
     for h in range(1,3):
         for w in range(1,9):
@@ -41,6 +43,7 @@ def feature_extraction(image):
                 for j in range(col-w+1):
                     output = 2*image_copy[i+3*h-1,j+w-1] + 2*image_copy[i+h-1,j] - 2*image_copy[i+h-1,j+w-1] - 2*image_copy[i+3*h-1,j] - image_copy[i+4*h-1,j+w-1] + image_copy[i+4*h-1,j] - image_copy[i,j] + image_copy[i,j+w-1]
                     feature.append(output)
+    print(len(feature))
     # Type 4 feature (two Vertical)
     for h in range(1,9):
         for w in range(1,3):
@@ -48,6 +51,7 @@ def feature_extraction(image):
                 for j in range(col-4*w+1):
                     output = 2*image_copy[i,j+w-1] + 2*image_copy[i+h-1,j+3*w-1] - 2*image_copy[i,j+3*w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i,j]+ image_copy[i+h-1,j] - image_copy[i+h-1,j+4*w-1] + image_copy[i,j+4*w-1]
                     feature.append(output)
+    print(len(feature))
     # Type 5 feature (four)
     for h in range(1,5):
         for w in range(1,5):
@@ -55,10 +59,12 @@ def feature_extraction(image):
                 for j in range(col-2*w+1):
                     output = image_copy[i,j]+ 4*image_copy[i+h-1,j+w-1] - 2*image_copy[i,j+w-1] - 2*image_copy[i+h-1,j] + image[i+2*h-1,j+2*w-1] - 2*image_copy[i+h-1,j+2*w-1] + image_copy[i,j+2*w-1] - 2*image_copy[i+2*h-1,j+w-1] + image_copy[i+2*h-1,j]
                     feature.append(output)
+    print(len(feature))
     
     return feature
 
 #---------------------------------------------------------------------------------------------------------------------
+'''
 base_path  =  os.getcwd()
 train_faces_files = glob.glob(base_path+ '/dataset/trainset/faces/*.png')
 train_faces_files.sort()
@@ -94,6 +100,7 @@ print((t1-t0)/60)
 
 #---------------------------------------------------------------------------------------------------------------------
 # test file 
+
 train_faces_files = glob.glob(base_path+ '/dataset/testset/faces/*.png')
 train_faces_files.sort()
 train_non_faces_files = glob.glob(base_path+ '/dataset/testset/non-faces/*.png')
@@ -135,4 +142,3 @@ i_image = intergal_image(test)
 image_copy = i_image
 feature = feature_extraction(image_copy)
 print(len(feature))
-'''

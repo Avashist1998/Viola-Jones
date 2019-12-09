@@ -8,14 +8,19 @@ import multiprocessing
 from joblib import Parallel, delayed
 t0 = time.time()
 def beta_cal(epsolon):
-    beta = 1/((1-epsolon)/epsolon)
+    beta = (epsolon/(1-epsolon))
     return beta
 def weight_cal(Distribution,label,prediction,error,gama):
     e = (prediction == label).astype(int)
-    epsolan = sum(Distribution*(1-e))
+    new_gama = gama/len(label == 1)
+    new_gama_n = (1-gama)/len(label  == -1)
+    e_w = np.array(list(map((lambda x : new_gama if (x == 1) else new_gama_n),train_y)))
+    weights = ((e_w)*Distribution)/sum((e_w)*Distribution)
+    epsolan = sum((weights)*(1-e))
     beta = beta_cal(epsolan)
     Distribution_new = Distribution*beta**(e)
-    Distribution_new = Distribution_new/sum(Distribution_new)
+    Distribution_new = Distribution_new/sum(Distribution)
+    print(beta)
     print(sum(abs(Distribution_new-Distribution)))
     return Distribution_new,beta
 
@@ -50,6 +55,7 @@ def decision_stamp(S,Distribution):
     X  = S.drop(columns = ['Label','Distribution'])
     S_np = np.array(S)
     t0 = time.time()
+    S_np[:,-1] = Distribution
     [row,col] = S_np.shape
     num_cores = multiprocessing.cpu_count()
     processed_list = Parallel(n_jobs=num_cores)(delayed(parllel_sort)(S_np,j,row) for j in range(col-2))
@@ -97,7 +103,7 @@ def df_maker(S,gama):
     train_y = S[S.columns[-1]]
     P_count = train_y[train_y == 1].count() 
     N_count = len(train_y) - P_count
-    Distribution = np.array([gama/(2*P_count)]*P_count + [(1-gama)/(2*N_count)]*N_count)
+    Distribution = np.array([0.5*(1/P_count)]*P_count + [0.5*(1/N_count)]*N_count)
     Distribution = Distribution/sum(Distribution)
     S = S.merge(pd.Series(Distribution).to_frame(), left_index=True, right_index=True)
     S.columns = col
@@ -129,12 +135,10 @@ test_X = train_df.drop(columns = test_df.columns[-1])
 test_y = train_df[test_df.columns[-1]]
 print(time.time()-t)
 features_names = pd.read_csv(base_path+'/features_names.csv',header = None)
-rounds = 10
-for gama in [0.1,0.9,0.5]:
-    train_df = df_maker(train_df,gama)
-    
-    train_df = df_maker(train_df,gama)
-    [beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df,train_y,rounds,gama)
+train_df_processed = df_maker(train_df,gama)
+rounds = 5
+for gama in [0.1,0.5,0.9]:
+    [beta_list, j_of_round, e_t, theta,parity_tol] = ada_boost(train_df_processed,train_y,rounds,gama)
     J_names = (features_names.iloc[j_of_round])[0]
     sum_error = total_error(test_X,test_y,theta,parity_tol)
     A = pd.DataFrame({'round':np.arange(1, rounds+1, 1),'beta':beta_list,'J_values':j_of_round,'theat':theta,'emprical':e_t[:,0],'False Negative':e_t[:,1],'False Positive':e_t[:,2],'pairty':parity_tol,'emprical_total':sum_error[:,0],'False Negative_total':sum_error[:,1],'False Positive_total':sum_error[:,2]})
