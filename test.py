@@ -22,7 +22,8 @@ def weight_cal(Distribution,label,prediction,error,gama):
     print(sum(abs(Distribution_new-Distribution)))
     return Distribution_new,beta
 
-def decision_stamp_search(list_data,F_star,row):
+def decision_stamp_search(list_data):
+    F_star = float('inf')
     for i in range(len(list_data)):
         j = list_data[i][0]
         Xj = list_data[i][1]
@@ -32,32 +33,38 @@ def decision_stamp_search(list_data,F_star,row):
         if F< F_star:
             F_star = F
             theta_star = Xj[0]-1
-            j_star = j 
+            j_star = j
         for i in range(0,row-1):
             F = F - Yj[i]*Dj[i]
+            
             if ((F<F_star) &  (Xj[i] != Xj[i+1])):
                 F_star = F
                 theta_star= 0.5*((Xj[i] + Xj[i+1]))
                 j_star=j
-    return(j_star,theta_star)
+    return(j_star,theta_star,)
 def parllel_sort(S_np,j,row):
     X_np  = S_np[:,:-2]
     Sort = S_np[:,j].argsort()
     Xj =  (S_np[:,j])[Sort]
     Yj =  (S_np[:,-2])[Sort]
-    Dj = (S_np[:,-1])[Sort]   
+    Dj = (S_np[:,-1])[Sort]
     return(j,Xj,Yj,Dj)
     
 def decision_stamp(S,Distribution):
+    temp = time.time()
     F_star = float('inf')
     X  = S.drop(columns = ['Label','Distribution'])
     S_np = np.array(S)
     t0 = time.time()
     S_np[:,-1] = Distribution
+    print(time.time()-temp)
+    F_star = float('inf')
+    X  = S.drop(columns = ['Label','Distribution'])
+    S_np = np.array(S)
     [row,col] = S_np.shape
     num_cores = multiprocessing.cpu_count()
-    processed_list = Parallel(n_jobs=num_cores,prefer = 'threads')(delayed(parllel_sort)(S_np,j,row) for j in range(col-2))
-    [j_star,theta_star] = decision_stamp_search(processed_list,F_star,row)
+    processed_list = Parallel(n_jobs=num_cores)(delayed(parllel_sort)(S_np,j,row) for j in range(col-2))
+    [j_star,theta_star] = decision_stamp_search(processed_list,F_star)
     return (j_star,theta_star)
 
 def error_calcuator(prediction,label):

@@ -18,7 +18,8 @@ def weight_cal(Distribution,label,prediction,error):
     Distribution_new = Distribution_new/sum(Distribution_new)
     return Distribution_new,beta
 
-def decision_stamp_search(list_data,F_star,row):
+def decision_stamp_search(list_data,row):
+    F_star = float('inf')
     for i in range(len(list_data)):
         j = list_data[i][0]
         Xj = list_data[i][1]
@@ -28,7 +29,7 @@ def decision_stamp_search(list_data,F_star,row):
         if F< F_star:
             F_star = F
             theta_star = Xj[0]-1
-            j_star = j 
+            j_star = j
         for i in range(0,row-1):
             F = F - Yj[i]*Dj[i]
             if ((F<F_star) &  (Xj[i] != Xj[i+1])):
@@ -41,7 +42,7 @@ def parllel_sort(S_np,j,row):
     Sort = S_np[:,j].argsort()
     Xj =  (S_np[:,j])[Sort]
     Yj =  (S_np[:,-2])[Sort]
-    Dj = (S_np[:,-1])[Sort]   
+    Dj = (S_np[:,-1])[Sort]
     return(j,Xj,Yj,Dj)
     
 def decision_stamp(S,Distribution):
@@ -53,7 +54,7 @@ def decision_stamp(S,Distribution):
     [row,col] = S_np.shape
     num_cores = multiprocessing.cpu_count()
     processed_list = Parallel(n_jobs=num_cores,prefer = 'threads')(delayed(parllel_sort)(S_np,j,row) for j in range(col-2))
-    [j_star,theta_star] = decision_stamp_search(processed_list,F_star,row)
+    [j_star,theta_star] = decision_stamp_search(processed_list,row)
     return (j_star,theta_star)
 
 def error_calcuator(prediction,label):
