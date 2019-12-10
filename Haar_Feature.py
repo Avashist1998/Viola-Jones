@@ -64,7 +64,7 @@ def feature_extraction(image):
     return feature
 
 #---------------------------------------------------------------------------------------------------------------------
-'''
+
 base_path  =  os.getcwd()
 train_faces_files = glob.glob(base_path+ '/dataset/trainset/faces/*.png')
 train_faces_files.sort()
@@ -134,11 +134,3 @@ pd.DataFrame((final).astype(int)).to_csv(base_path+ "/test_data.csv",header=None
 t1 = time.time()
 print((t1-t0)/60)
 #---------------------------------------------------------------------------------------------------------------------
-'''
-# test code needs to be deleted 
-test  = np.array([1]*(19**2)).reshape(19,19)
-feature = []
-i_image = intergal_image(test)
-image_copy = i_image
-feature = feature_extraction(image_copy)
-print(len(feature))

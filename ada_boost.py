@@ -10,7 +10,7 @@ t0 = time.time()
 def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
     return beta
-def weight_cal(Distribution,label,prediction,error):
+def weight_cal(Distribution,label,prediction):
     e = (prediction == label).astype(int)
     epsolan = sum(Distribution*(1-e))
     beta = beta_cal(epsolan)
