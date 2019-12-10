@@ -26,12 +26,12 @@ for k in range(len((data.J_values)[:])):
         a = 255*np.array([1]*h*w + [0]*h*w)
         a.resize(2*h,w)
         image_with_feature[i:i+h*2,j:w+j] = a
-    elif ( (data.J_values).iloc[k] <= 18262 ):
+    elif ( (data.J_values).iloc[k] <= 18352 ):
     #type 3
         a = 255*np.array([0]*h*w + [1]*2*h*w + [0]*h*w)
         a.resize(4*h,w)
         image_with_feature[i:i+h*4,j:j+w] = a
-    elif ( (data.J_values).iloc[k] <= 21724 ):
+    elif ( (data.J_values).iloc[k] <= 21824 ):
     #type 4
         a = 255*np.array([0]*h*w + [1]*2*h*w + [0]*h*w)
         a.resize(h,4*w)
