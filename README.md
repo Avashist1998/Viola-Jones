@@ -1,12 +1,12 @@
 # Viola-Jones_Algorithm
-This is an implementation of the Viola-Jones Algorithm in python3. The results of the original algorithm are improved using Adaboost algorithm. 
+This is an implementation of the Viola-Jones Algorithm in python3. The results of the original algorithm are improved using Adaboost algorithm.<br/> 
+<br/>
+The enviorment information<br/> 
+Language = Python3<br/>
+Packages<br/> 
+numpy, open-cv, mathplotlib, os, joblib, multiprocessing, glob, re seaborn and pandas<br/>
 
-The enviorment information 
-Language = Python3
-Packages 
-numpy, open-cv, mathplotlib, os, joblib, multiprocessing, glob, re seaborn and pandas
-
-One can install these by using the following commands 
+One can install these by using the following commands<br/> 
 numpy:   $ pip install numpy<br/>
 open-cv: $ pip install opencv-python<br/>
 mathplotlib: $ pip install mathplotlib<br/>
