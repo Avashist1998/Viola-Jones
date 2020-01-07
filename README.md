@@ -7,16 +7,16 @@ Packages
 numpy, open-cv, mathplotlib, os, joblib, multiprocessing, glob, re seaborn and pandas
 
 One can install these by using the following commands 
- numpy:   $ pip install numpy
- open-cv: $ pip install opencv-python
- mathplotlib: $ pip install mathplotlib
- multiprocessing: $ pip install multiprocessing
- joblib: $ pip install joblib
- os: $ pip install os
- pandas: $ pip install pandas 
- glob $ pip install glob
- seaborn $ pip install seaborn
- re $ pip install re
+numpy:   $ pip install numpy
+open-cv: $ pip install opencv-python
+mathplotlib: $ pip install mathplotlib
+multiprocessing: $ pip install multiprocessing
+joblib: $ pip install joblib
+os: $ pip install os
+pandas: $ pip install pandas 
+glob $ pip install glob
+seaborn $ pip install seaborn
+re $ pip install re
 
 
 One can use the sudo if having trouble or view the documentation online
