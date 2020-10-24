@@ -119,6 +119,11 @@ def total_error(test_X,test_y,theta,parity_tol):
         sum_error.append(error_calcuator(2*predictions_total[i]-1,test_np_y))
     sum_error = np.array(sum_error)
     return(sum_error)
+
+
+
+
+
 base_path  =  os.getcwd()
 rounds = 10
 train_df = pd.read_csv((base_path+'/Data/train_data.csv'),header = None)
