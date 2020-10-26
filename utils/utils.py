@@ -15,6 +15,7 @@ def intergal_image(image):
     for i in range(0,row):
         for j in range(0,col):
             i_image[i,j] = sum(sum(image[0:i+1,0:j+1]))
+
     return i_image
 def feature_extraction(image):
     image_copy = image.copy()
