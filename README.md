@@ -3,6 +3,10 @@
 # Viola-Jones_Algorithm
 This is an implementation of the Viola-Jones Algorithm in python3. The results of the original algorithm are improved using Adaboost algorithm.
 
+# Enviornment Setup
+
+> pip install -r requirements.txt
+
 # Operating system notes
 
 If someone is running the code on a windows machine. They will have to change the path that is used in all of the file because the program was written a Unix based machine. The program makes used of parrellelization to decrease excecution time, so when running on single core machine on may observe longer ececution times than stated.  

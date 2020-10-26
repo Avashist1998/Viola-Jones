@@ -1,9 +1,8 @@
-import glob
+import os 
 import re
+import cv2
 import pandas as pd 
 import numpy as np 
-import os 
-import cv2
 import matplotlib.pyplot as plt
 
 base_path = os.getcwd()

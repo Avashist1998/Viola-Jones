@@ -1,11 +1,10 @@
-# the goal of the file is to develop the ada_boost algorithm 
-import pandas as pd 
-import numpy as np 
 import os 
 import time
-import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd  
 import multiprocessing
 from joblib import Parallel, delayed
+
 t0 = time.time()
 def beta_cal(epsolon):
     beta = 1/((1-epsolon)/epsolon)
@@ -119,8 +118,6 @@ def total_error(test_X,test_y,theta,parity_tol):
         sum_error.append(error_calcuator(2*predictions_total[i]-1,test_np_y))
     sum_error = np.array(sum_error)
     return(sum_error)
-
-
 
 
 

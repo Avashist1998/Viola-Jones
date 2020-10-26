@@ -1,11 +1,10 @@
-# modified adaboost to false positive and false negative into account
-import pandas as pd 
-import numpy as np 
 import os 
 import time
-import matplotlib.pyplot as plt
+import pandas as pd 
+import numpy as np 
 import multiprocessing
 from joblib import Parallel, delayed
+
 t0 = time.time()
 def beta_cal(epsolon):
     beta = (epsolon/(1-epsolon))
