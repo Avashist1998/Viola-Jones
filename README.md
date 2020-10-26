@@ -1,33 +1,18 @@
+[Paper](https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf) 
+
 # Viola-Jones_Algorithm
-This is an implementation of the Viola-Jones Algorithm in python3. The results of the original algorithm are improved using Adaboost algorithm.<br/> 
-<br/>
-The enviorment information<br/> 
-Language = Python3<br/>
-Packages<br/> 
-numpy, open-cv, mathplotlib, os, joblib, multiprocessing, glob, re seaborn and pandas<br/>
-
-One can install these by using the following commands<br/> 
-numpy:   $ pip install numpy<br/>
-open-cv: $ pip install opencv-python<br/>
-mathplotlib: $ pip install mathplotlib<br/>
-multiprocessing: $ pip install multiprocessing<br/>
-joblib: $ pip install joblib<br/>
-os: $ pip install os<br/>
-pandas: $ pip install pandas<br/> 
-glob $ pip install glob<br/>
-seaborn $ pip install seaborn<br/>
-re $ pip install re<br/>
-
-
-One can use the sudo if having trouble or view the documentation online
+This is an implementation of the Viola-Jones Algorithm in python3. The results of the original algorithm are improved using Adaboost algorithm.
 
 # Operating system notes
-If someone is running the code on a windows machine. They will have to change the path that is used in all of the file because the program was written a Unix based machine. The program makes used of parrellelization to decrease excecution time, so when running on single core machine on may observe longer ececution time.  
+
+If someone is running the code on a windows machine. They will have to change the path that is used in all of the file because the program was written a Unix based machine. The program makes used of parrellelization to decrease excecution time, so when running on single core machine on may observe longer ececution times than stated.  
 
 # Accessing Data Set
+
 One can download the data set from git by running git lfs. Please refer to git lfs documentation. If one can on download the feature file, one can run the Haar_feature.py to extract their own feature file. 
 
 # Files Information
+
 Main.py used to plot the error extracting the features 
 Displaying_features.py used to display the Haar features on a default image
 ada_boost.py perfrom the adaboost algorthim on the data and ouputs the best features and their respective threshold to a file
