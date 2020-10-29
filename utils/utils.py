@@ -45,7 +45,7 @@ def feature_extraction(image):
                     output = 2*image_copy[i+3*h-1,j+w-1] + 2*image_copy[i+h-1,j] - 2*image_copy[i+h-1,j+w-1] - 2*image_copy[i+3*h-1,j] - image_copy[i+4*h-1,j+w-1] + image_copy[i+4*h-1,j] - image_copy[i,j] + image_copy[i,j+w-1]
                     feature.append(output)
     print(len(feature))
-    # Type 4 feature (two Vertical)
+    # Type 4 feature (three Vertical)
     for h in range(1,9):
         for w in range(1,3):
             for i in range(row-h+1): 
@@ -63,6 +63,48 @@ def feature_extraction(image):
     print(len(feature))
     
     return feature
+
+
+class feature_makers():
+    def __init__(range):
+        self.range = range
+    def feature_extraction(image,feature_type=1,h,w):
+        '''
+            Type 1 feature (two vertical)
+            Type 2 feature (two horizontal)
+            Type 3 feautre (three Horizontal)
+            Type 4 feature (three vertical)
+            Type 5 feture (four Cross)
+        '''
+        row,col = image.shape
+        feature = list()
+        if (feature_type == 1):
+            for i in range(row-h+1): 
+                for j in range(col-2*w+1):
+                    output = -2*image_copy[i+h-1,j+w-1] + 2*image_copy[i,j+w-1] + image_copy[i+h-1,j+2*w-1] + image_copy[i+h-1,j] + image_copy[i,j+2*w-1] - image_copy[i,j]
+                    feature.append(output)
+        else if (feature_type == 2):
+            for i in range(row-2*h+1): 
+                for j in range(col-w+1):
+                    output = 2*image_copy[i+h-1,j] + image_copy[i+2*h-1,j+w-1] + image_copy[i,j+w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i+2*h-1,j] - image_copy[i,j]
+                    feature.append(output)
+        else if (feature_type == 3):
+            for i in range(row-4*h+1): 
+                for j in range(col-w+1):
+                    output = 2*image_copy[i+3*h-1,j+w-1] + 2*image_copy[i+h-1,j] - 2*image_copy[i+h-1,j+w-1] - 2*image_copy[i+3*h-1,j] - image_copy[i+4*h-1,j+w-1] + image_copy[i+4*h-1,j] - image_copy[i,j] + image_copy[i,j+w-1]
+                    feature.append(output)
+        else if (feature_type == 4):
+            for i in range(row-h+1): 
+                for j in range(col-4*w+1):
+                    output = 2*image_copy[i,j+w-1] + 2*image_copy[i+h-1,j+3*w-1] - 2*image_copy[i,j+3*w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i,j]+ image_copy[i+h-1,j] - image_copy[i+h-1,j+4*w-1] + image_copy[i,j+4*w-1]
+                    feature.append(output)
+        else:
+            for i in range(row-2*h+1): 
+                for j in range(col-2*w+1):
+                    output = image_copy[i,j]+ 4*image_copy[i+h-1,j+w-1] - 2*image_copy[i,j+w-1] - 2*image_copy[i+h-1,j] + image[i+2*h-1,j+2*w-1] - 2*image_copy[i+h-1,j+2*w-1] + image_copy[i,j+2*w-1] - 2*image_copy[i+2*h-1,j+w-1] + image_copy[i+2*h-1,j]
+                    feature.append(output)
+        return features
+
 
 #---------------------------------------------------------------------------------------------------------------------
 
