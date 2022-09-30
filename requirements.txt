@@ -2,5 +2,5 @@ opencv_python==4.2.0.32
 pandas==0.24.2
 matplotlib==2.2.5
 numpy==1.16.5
-joblib==0.17.0
+joblib==1.2.0
 scikit_learn==0.23.2
