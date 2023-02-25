@@ -6,17 +6,18 @@ import multiprocessing
 from joblib import Parallel, delayed
 
 t0 = time.time()
-def beta_cal(epsolon):
-    beta = (epsolon/(1-epsolon))
+def beta_cal(epsilon):
+    beta = (epsilon/(1-epsilon))
     return beta
+
 def weight_cal(Distribution,label,prediction,error,gama):
     e = (prediction == label).astype(int)
     new_gama = gama/len(label == 1)
     new_gama_n = (1-gama)/len(label  == -1)
     e_w = np.array(list(map((lambda x : new_gama if (x == 1) else new_gama_n),train_y)))
     weights = ((e_w)*Distribution)/sum((e_w)*Distribution)
-    epsolan = sum((weights)*(1-e))
-    beta = beta_cal(epsolan)
+    epsilon = sum((weights)*(1-e))
+    beta = beta_cal(epsilon)
     Distribution_new = Distribution*beta**(e)
     Distribution_new = Distribution_new/sum(Distribution)
     print(beta)
@@ -41,6 +42,8 @@ def decision_stamp_search(list_data,F_star,row):
                 theta_star= 0.5*((Xj[i] + Xj[i+1]))
                 j_star=j
     return(j_star,theta_star)
+
+
 def parllel_sort(S_np,j,row):
     X_np  = S_np[:,:-2]
     Sort = S_np[:,j].argsort()

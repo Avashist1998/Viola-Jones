@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Tuple
 import multiprocessing
 from joblib import Parallel,delayed
 from sklearn.model_selection import train_test_split
@@ -25,9 +26,9 @@ class DecisionStump():
         self.weights = None
 
 
-# Assuming that y is in turm of -1 and 1 
+# Assuming that y is in turn of -1 and 1 
 
-class ada_boost():
+class AdaBoost():
     def __init__(self,n_estimators = 10):
         self.n_estimators = n_estimators
     
@@ -39,15 +40,14 @@ class ada_boost():
             setattr(self, parameter, value)
         return self
 
-    
-    def parllel_sort(self,X,y,weights,j):
-        Sort = X[:,j].argsort()
-        Xj =  (X[:,j])[Sort]
-        Yj =  (y[:])[Sort]
-        Dj = (weights[:])[Sort]   
-        return(j,Xj,Yj,Dj)
+    def parallel_sort(self, X: np.ndarray, y: np.ndarray, weights: np.ndarray, j: int) -> Tuple[int, np.ndarray, np.ndarray, np.ndarray]:
+        Sort: np.ndarray = X[:, j].argsort()
+        Xj = (X[:, j])[Sort]
+        Yj = (y[:])[Sort]
+        Dj = (weights[:])[Sort]
+        return (j, Xj, Yj, Dj)
 
-    def decision_stamp_search(self,list_data,row):
+    def decision_stamp_search(self, list_data, row):
         F_star = float('inf')
         for i in range(len(list_data)):
             j = list_data[i][0]
@@ -67,16 +67,15 @@ class ada_boost():
                     j_star=j
         return(j_star,theta_star)
 
-
-    def beta_cal(self,epsolon):
-        beta = 1/((1-epsolon)/epsolon)
+    def beta_cal(self,epsilon: float):
+        beta = 1/((1-epsilon)/epsilon)
         return beta
 
     def weight_cal(self,Distribution,label,prediction):
         e = (prediction == label).astype(int)
-        epsolan = np.sum(Distribution*(1-e))
-        beta = self.beta_cal(epsolan)
-        if epsolan == 0:
+        epsilon = np.sum(Distribution*(1-e))
+        beta = self.beta_cal(epsilon)
+        if epsilon == 0:
             Distribution_new = Distribution
             beta = 0.00001
         else:
@@ -116,7 +115,7 @@ class ada_boost():
             clf = DecisionStump()
             [row,col] = X_train.shape
             num_cores = multiprocessing.cpu_count()
-            processed_list = Parallel(n_jobs=num_cores)(delayed(self.parllel_sort)(X_train,y_train,weights,j) for j in range(col))
+            processed_list = Parallel(n_jobs=num_cores)(delayed(self.parallel_sort)(X_train,y_train,weights,j) for j in range(col))
             [j_star,theta_star] = self.decision_stamp_search(processed_list,row)
             p = 1
             prediction = np.ones(np.shape(y_train))

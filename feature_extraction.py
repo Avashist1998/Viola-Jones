@@ -5,18 +5,20 @@ import os
 import glob 
 import numpy as np 
 import matplotlib.pyplot as plt
+from typing import List
 import pandas as pd 
 import time
 # Setting up a assigning the label to the images
 # get the base path of the directory
-def intergal_image(image):
+def integral_image(image: np.ndarray) -> np.ndarray:
     [row,col] = image.shape
-    i_image = image.copy()
+    i_image: np.ndarray = image.copy()
     for i in range(0,row):
         for j in range(0,col):
             i_image[i,j] = sum(sum(image[0:i+1,0:j+1]))
     return i_image
-def feature_extraction(image):
+
+def feature_extraction(image) -> List[float]:
     image_copy = image.copy()
     feature = []
     [row, col] = image_copy.shape
@@ -74,7 +76,7 @@ data = np.array([[]])
 t0 = time.time()
 for names in train_faces_files:
     image = cv2.imread(names,cv2.IMREAD_GRAYSCALE)
-    i_image = intergal_image(image)
+    i_image = integral_image(image)
     f = feature_extraction(i_image)
     data = np.append(data,f)
 
@@ -84,7 +86,7 @@ data = np.resize(data, (num_image,num_feature))
 temp_data = np.array([[]])
 for names in train_non_faces_files:
     image = cv2.imread(names,cv2.IMREAD_GRAYSCALE)
-    i_image = intergal_image(image)
+    i_image = integral_image(image)
     f = feature_extraction(i_image)
     temp_data = np.append(temp_data,f)
 num_image = int(len(temp_data)/num_feature)
@@ -109,7 +111,7 @@ data = np.array([[]])
 t0 = time.time()
 for names in train_faces_files:
     image = cv2.imread(names,cv2.IMREAD_GRAYSCALE)
-    i_image = intergal_image(image)
+    i_image = integral_image(image)
     f = feature_extraction(i_image)
     data = np.append(data,f)
 
@@ -119,7 +121,7 @@ data = np.resize(data, (num_image,num_feature))
 temp_data = np.array([[]])
 for names in train_non_faces_files:
     image = cv2.imread(names,cv2.IMREAD_GRAYSCALE)
-    i_image = intergal_image(image)
+    i_image = integral_image(image)
     f = feature_extraction(i_image)
     temp_data = np.append(temp_data,f)
 num_image = int(len(temp_data)/num_feature)
@@ -130,7 +132,7 @@ label = np.append(label,label_non_faces)
 total_data = np.concatenate((data,temp_data),axis=0)
 final = np.insert(total_data, num_feature ,label,axis=1)
 #final.tofile(base_path + 'train_data.csv',sep=',',format='%10.5f')
-pd.DataFrame((final).astype(int)).to_csv(base_path+ "/test_data.csv",header=None, index=None,float_format= '%10.5f')
+pd.DataFrame((final).astype(int)).to_csv(base_path + "/test_data.csv",header=None, index=None,float_format= '%10.5f')
 t1 = time.time()
 print((t1-t0)/60)
 #---------------------------------------------------------------------------------------------------------------------

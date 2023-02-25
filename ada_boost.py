@@ -88,6 +88,7 @@ def ada_boost(S,y,rounds):
     e_t = np.array(e_t)
     e_t.resize(rounds,3)
     return (np.array(beta_list), np.array(j_of_round), np.array(e_t), np.array(theta), np.array(parity_tol))
+
 def df_maker(S):
     col = []
     for names in S.columns:
