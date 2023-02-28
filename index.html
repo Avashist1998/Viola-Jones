@@ -17,11 +17,11 @@
             <div  style="text-align: center;">
                 <h2>Select an image?</h2>
                 <div id="imageSelection" style="flex:auto; flex-direction: row;">
-                    <img class="unselectedImg" id="black&white" src="./static/img/color_image.jpg" onclick="imageSelect(`black&white`)">
-                    <img class="unselectedImg" id="color" src="./static/img/color_image.jpg" onclick="imageSelect(`color`)">
-                    <img class="unselectedImg" id="group" src="./static/img/color_image.jpg" onclick="imageSelect(`group`)">
+                    <img class="unselectedImg" id="black&white" src="./static/img/color_image.jpg" >
+                    <img class="unselectedImg" id="color" src="./static/img/color_image.jpg">
+                    <img class="unselectedImg" id="group" src="./static/img/color_image.jpg">
                 </div>
-                <button id="imageSubmitBtn" disabled="true" onclick="iCanSubmit()">submit</button>
+                <button id="imageSubmitBtn">submit</button>
             </div>
             <ul>
                 <li>Three example images</li>
@@ -39,35 +39,5 @@
         </div>
     </body>
 
-
-    <script>
-        selectedImageID = "";
-        (async () => {
-        let response = await fetch("target/wasm32-unknown-unknown/release/Viola_Jones_Algorithm.wasm");
-        let bytes = await response.arrayBuffer();
-        let { instance } = await WebAssembly.instantiate(bytes, { });
-        console.log('The answer is: ', instance.exports.add_five(13));
-        console.log("The answer is : ", instance.exports.add_five(25));
-        console.log(instance.exports.concat_string("This is a test"));
-
-        document.getElementById("loading").className = "loadingHide"
-        document.getElementById("content").className = "contentShowing"
-        })();
-
-        function imageSelect(id) {
-            document.getElementById(id).className = "selectedImg"
-            if (selectedImageID !== "") {
-                document.getElementById(selectedImageID).className = "unselectedImg"
-            }
-            document.getElementById("imageSubmitBtn").disabled = false
-            selectedImageID = id
-        }
-
-        function iCanSubmit() {
-            console.log(`Submitting Image ${selectedImageID}`)
-            console.log(instance.exports.concat_string(selectedImageID));
-        }
-
-
-    </script>
+    <script type="module" src="/src/main.ts"></script>
 </html>
