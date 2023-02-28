@@ -1,0 +1,61 @@
+# The goal of the file to perform the feature extraction using the Haar_Features. 
+# I hoping to define the function in this file and worry about the rest later.
+import numpy as np
+from typing import List
+
+# Setting up a assigning the label to the images
+# get the base path of the directory
+def integral_image(image: np.ndarray) -> np.ndarray:
+    [row, col] = image.shape
+    i_image: np.ndarray = image.copy()
+    for i in range(0,row):
+        for j in range(0,col):
+            i_image[i,j] = sum(sum(image[0:i+1,0:j+1]))
+    return i_image
+
+def feature_extraction(image) -> List[float]:
+    image_copy = image.copy()
+    feature = []
+    [row, col] = image_copy.shape
+    # Type 1 features (two vertical)
+    for w in range(1,5):
+        for h in range(1,9):
+            for i in range(row-h+1): 
+                for j in range(col-2*w+1):
+                    output = -2*image_copy[i+h-1,j+w-1] + 2*image_copy[i,j+w-1] + image_copy[i+h-1,j+2*w-1] + image_copy[i+h-1,j] + image_copy[i,j+2*w-1] - image_copy[i,j]
+                    feature.append(output)
+    # print(len(feature))
+    #Type 2 features (two horizontal)
+    for h in range(1,5):
+        for w in range(1,9):
+            for i in range(row-2*h+1): 
+                for j in range(col-w+1):
+                    output = 2*image_copy[i+h-1,j] + image_copy[i+2*h-1,j+w-1] + image_copy[i,j+w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i+2*h-1,j] - image_copy[i,j]
+                    feature.append(output)
+    # print(len(feature))
+    # Type 3 feature (three Horizontal)
+    for h in range(1,3):
+        for w in range(1,9):
+            for i in range(row-4*h+1): 
+                for j in range(col-w+1):
+                    output = 2*image_copy[i+3*h-1,j+w-1] + 2*image_copy[i+h-1,j] - 2*image_copy[i+h-1,j+w-1] - 2*image_copy[i+3*h-1,j] - image_copy[i+4*h-1,j+w-1] + image_copy[i+4*h-1,j] - image_copy[i,j] + image_copy[i,j+w-1]
+                    feature.append(output)
+    # print(len(feature))
+    # Type 4 feature (two Vertical)
+    for h in range(1,9):
+        for w in range(1,3):
+            for i in range(row-h+1): 
+                for j in range(col-4*w+1):
+                    output = 2*image_copy[i,j+w-1] + 2*image_copy[i+h-1,j+3*w-1] - 2*image_copy[i,j+3*w-1] - 2*image_copy[i+h-1,j+w-1] - image_copy[i,j]+ image_copy[i+h-1,j] - image_copy[i+h-1,j+4*w-1] + image_copy[i,j+4*w-1]
+                    feature.append(output)
+    # print(len(feature))
+    # Type 5 feature (four)
+    for h in range(1,5):
+        for w in range(1,5):
+            for i in range(row-2*h+1): 
+                for j in range(col-2*w+1):
+                    output = image_copy[i,j]+ 4*image_copy[i+h-1,j+w-1] - 2*image_copy[i,j+w-1] - 2*image_copy[i+h-1,j] + image[i+2*h-1,j+2*w-1] - 2*image_copy[i+h-1,j+2*w-1] + image_copy[i,j+2*w-1] - 2*image_copy[i+2*h-1,j+w-1] + image_copy[i+2*h-1,j]
+                    feature.append(output)
+    # print(len(feature))
+    
+    return feature

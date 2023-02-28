@@ -1,4 +1,15 @@
 .vscode
 .DS_Store/
 .DS_Store?
+.dataset
+
+## Python enviornment
 env
+__pycache__
+.env
+venv
+
+# Added by cargo
+
+/target
+/Cargo.lock
