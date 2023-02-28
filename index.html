@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="static/index.css"/>
+    </head>
+
+    <body>
+        <div id="loading" class="loadingShow">
+            <img src="https://i.gifer.com/origin/34/34338d26023e5515f6cc8969aa027bca_w200.gif"></img>
+        </div>
+        <div id="content" class="contentLoading">
+            <h1 style="text-align: center;">
+                Welcome to Viola-Jones Showcase
+            </h1>
+            <div  style="text-align: center;">
+                <h2>Select an image?</h2>
+                <div id="imageSelection" style="flex:auto; flex-direction: row;">
+                    <img class="unselectedImg" id="black&white" src="./static/img/color_image.jpg" onclick="imageSelect(`black&white`)">
+                    <img class="unselectedImg" id="color" src="./static/img/color_image.jpg" onclick="imageSelect(`color`)">
+                    <img class="unselectedImg" id="group" src="./static/img/color_image.jpg" onclick="imageSelect(`group`)">
+                </div>
+                <button id="imageSubmitBtn" disabled="true" onclick="iCanSubmit()">submit</button>
+            </div>
+            <ul>
+                <li>Three example images</li>
+                <ul>
+                    <li>1 black and white 1- 2 faces</li>
+                    <li>2 Color image 1 - 2 face</li>
+                    <li>3 Color group image 5 - 16 faces</li>
+                </ul>
+                
+                <li>(future) A way user can upload the image</li>
+                <li>(future) Image validation processes</li>
+                <li>We need gif for scanning the image</li>
+                <li>Process the image</li>
+            </ul>
+        </div>
+    </body>
+
+
+    <script>
+        selectedImageID = "";
+        (async () => {
+        let response = await fetch("target/wasm32-unknown-unknown/release/Viola_Jones_Algorithm.wasm");
+        let bytes = await response.arrayBuffer();
+        let { instance } = await WebAssembly.instantiate(bytes, { });
+        console.log('The answer is: ', instance.exports.add_five(13));
+        console.log("The answer is : ", instance.exports.add_five(25));
+        console.log(instance.exports.concat_string("This is a test"));
+
+        document.getElementById("loading").className = "loadingHide"
+        document.getElementById("content").className = "contentShowing"
+        })();
+
+        function imageSelect(id) {
+            document.getElementById(id).className = "selectedImg"
+            if (selectedImageID !== "") {
+                document.getElementById(selectedImageID).className = "unselectedImg"
+            }
+            document.getElementById("imageSubmitBtn").disabled = false
+            selectedImageID = id
+        }
+
+        function iCanSubmit() {
+            console.log(`Submitting Image ${selectedImageID}`)
+            console.log(instance.exports.concat_string(selectedImageID));
+        }
+
+
+    </script>
+</html>
