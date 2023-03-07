@@ -1,11 +1,13 @@
 ## Dataset
 .dataset
+.tmp_dataset
 
 ## Python enviornment
 env
 __pycache__
 .env
 venv
+.ipynb_checkpoints
 
 # Logs
 logs

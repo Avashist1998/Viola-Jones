@@ -19,23 +19,23 @@ def weight_cal(Distribution,label,prediction):
     Distribution_new = Distribution_new/sum(Distribution_new)
     return Distribution_new,beta
 
-def decision_stamp_search(list_data,row):
+def decision_stamp_search(data, row):
     F_star = float('inf')
-    for i in range(len(list_data)):
-        j = list_data[i][0]
-        Xj = list_data[i][1]
-        Yj = list_data[i][2]
-        Dj = list_data[i][3]
+    for i in range(len(data)):
+        j = data[i][0]
+        Xj = data[i][1]
+        Yj = data[i][2]
+        Dj = data[i][3]
         F = sum(Dj[Yj == 1])
         if F< F_star:
             F_star = F
             theta_star = Xj[0]-1
             j_star = j
-        for i in range(0,row-1):
+        for i in range(0, row-1):
             F = F - Yj[i]*Dj[i]
             if ((F<F_star) &  (Xj[i] != Xj[i+1])):
                 F_star = F
-                theta_star= 0.5*((Xj[i] + Xj[i+1]))
+                theta_star = 0.5*((Xj[i] + Xj[i+1]))
                 j_star=j
     return(j_star,theta_star)
 
@@ -59,7 +59,7 @@ def decision_stamp(S,Distribution):
     [j_star,theta_star] = decision_stamp_search(processed_list,row)
     return (j_star,theta_star)
 
-def error_calculator(prediction,label):
+def error_calculator(prediction, label):
     error = sum(prediction != label)/len(label)
     error_2 =  sum((prediction == -1)& (label == 1))/len(label)
     error_3 =  sum((prediction == 1)& (label == -1))/len(label)

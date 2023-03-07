@@ -1,28 +1,35 @@
-
+import wasmInit, {
+    concat_string
+} from "../my-crate/pkg/my_crate.js"
 
 const data = { selectedImageID: ""};
 
+const runWasm = async () => {
+    // Instantiate our wasm module
+    const rustWasm = await wasmInit("my-crate/pkg/my_crate_bg.wasm");  
+};
 
-(async () => {
-let response = await fetch("my-crate/pkg/my_crate_bg.wasm")
-let bytes = await response.arrayBuffer();
-let { instance } = await WebAssembly.instantiate(bytes, { });
-const add_five = instance.exports.add_five as CallableFunction;
-const concat_string = instance.exports.concat_string as CallableFunction;
+runWasm().then( () => {
+    const loading = document.getElementById("loading")
+    const content = document.getElementById("content")
+    if (loading !== null) {
+        loading.className = "loadingHide"
+    }
+    if (content !== null) {
+        content.className = "contentShowing"
+    }
+    var colorImage = document.getElementById("color") as HTMLImageElement;
+    colorImage.addEventListener("click", () => {imageSelect("color")});
+    var groupImage = document.getElementById("group") as HTMLImageElement;
+    groupImage.addEventListener("click", () => {imageSelect("group")});
+    var blackAndWhiteImage = document.getElementById("black&white") as HTMLImageElement;
+    blackAndWhiteImage.addEventListener("click", () => {imageSelect("black&white")});
 
-console.log("The answer is: ", add_five(13));
-console.log("The answer is : ", add_five(25));
-console.log(concat_string("This is a test"));
+    const submitButton = document.getElementById("imageSubmitBtn") as HTMLButtonElement;
+    submitButton.addEventListener("click", iCanSubmit);
+    submitButton.disabled = true;
+});
 
-const loading = document.getElementById("loading")
-const content = document.getElementById("content")
-if (loading !== null) {
-    loading.className = "loadingHide"
-}
-if (content !== null) {
-    content.className = "contentShowing"
-}
-})();
 
 function imageSelect(id: string) {
     const selectedImg = document.getElementById(id)
@@ -44,18 +51,7 @@ function imageSelect(id: string) {
 
 function iCanSubmit() {
     console.log(`Submitting Image ${data.selectedImageID}`)
-    // console.log(instance.exports.concat_string(selectedImageID));
+    console.log(concat_string(data.selectedImageID))
 }
-
-var colorImage = document.getElementById("color") as HTMLImageElement;
-colorImage.addEventListener("click", () => {imageSelect("color")});
-var groupImage = document.getElementById("group") as HTMLImageElement;
-groupImage.addEventListener("click", () => {imageSelect("group")});
-var blackAndWhiteImage = document.getElementById("black&white") as HTMLImageElement;
-blackAndWhiteImage.addEventListener("click", () => {imageSelect("black&white")});
-
-const submitButton = document.getElementById("imageSubmitBtn") as HTMLButtonElement;
-submitButton.addEventListener("click", iCanSubmit);
-submitButton.disabled = true;
 
 export { imageSelect, iCanSubmit}
