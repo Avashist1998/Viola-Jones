@@ -5,10 +5,13 @@ from typing import List, Tuple, Optional
 
 def get_integral_image(image: np.ndarray) -> np.ndarray:
     [row, col] = image.shape
-    i_image: np.ndarray = np.zeros(image.shape)
-    for i in range(0,row):
-        for j in range(0,col):
-            i_image[i,j] = np.int32(np.sum(image[0:i+1,0:j+1]))
+    i_image: np.ndarray = image.copy().astype("int32")
+    for j in range(1, col):
+        i_image[:,j] = np.int32(i_image[:, j-1] + i_image[:,j])
+
+    for i in range(1, row):
+        i_image[i,:] = np.int32(i_image[i-1, :] + i_image[i,:])
+
     return i_image
 
 def get_sum_from_i_image(x, y, w, h, i_image):

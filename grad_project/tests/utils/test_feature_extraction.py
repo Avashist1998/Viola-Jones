@@ -113,6 +113,12 @@ class TestFeatureExtraction(unittest.TestCase):
         self.assertEqual(get_slant_edge_feature(0, 6, 2, 2, self.test_i_image), 320)
         self.assertEqual(get_slant_edge_feature(6, 6, 2, 2, self.test_i_image), 90)
 
+    def test_get_feature_values(self):
+        """Test the Get feature from index."""
+
+        for key in self.expected_feature_val.keys():
+            self.assertEqual(get_feature_values(
+                19, 19, key), self.expected_feature_val[key])
 
     def test_extract_image_features(self):
         """Test the extract_image_feature methods."""
@@ -126,10 +132,22 @@ class TestFeatureExtraction(unittest.TestCase):
         self.assertEqual(features[318], 271)
         self.assertEqual(len(features), 453)
 
-    def test_get_feature_values(self):
-        """Test the Get feature from index."""
+    def test_extract_all_features(self):
+        """Test the extract_image_feature methods for all values for test image."""
 
-        for key in self.expected_feature_val.keys():
-            self.assertEqual(get_feature_values(
-                19, 19, key), self.expected_feature_val[key])
+        image = self.test_image
+        row, col = self.test_image.shape
+        features = extract_image_features(self.test_image)
 
+        for i in range(len(features)):
+            x, y, w, h, feature_type = get_feature_values(row, col, i)
+            if feature_type == "Vertical edge feature":
+                assert features[i] == np.sum(image[x:x+h, y:y+w], dtype=np.int32) - np.sum(image[x:x+h, y+w:y+2*w], dtype=np.int32)
+            elif feature_type == "Horizontal edge feature":
+                assert features[i] == np.sum(image[x:x+h, y:y+w], dtype=np.int32) - np.sum(image[x+h:x+2*h, y:y+w], dtype=np.int32)
+            elif feature_type == "Vertical band feature":
+                assert features[i] == np.sum(image[x:x+h, y:y+w], dtype=np.int32) +  np.sum(image[x:x+h, y+2*w:y+3*w]) - np.sum(image[x:x+h, y+w:y+2*w], dtype=np.int32)
+            elif feature_type == "Horizontal band feature":
+                assert features[i] == np.sum(image[x:x+h, y:y+w], dtype=np.int32) + np.sum(image[x+2*h:x+3*h, y:y+w], dtype=np.int32) - np.sum(image[x+h:x+2*h, y:y+w], dtype=np.int32)
+            else:
+                assert features[i] == np.sum(image[x:x+h, y:y+w], dtype=np.int32) + np.sum(image[x+h:x+2*h, y+w:y+2*w], dtype=np.int32) - np.sum(image[x:x+h, y+w:y+2*w], dtype=np.int32) - np.sum(image[x+h:x+2*h, y:y+w], dtype=np.int32)

@@ -14,6 +14,12 @@ from utils.logger import init_logger
 
 Logger: Final = init_logger(__name__)
 
+def init_distribution(labels: np.ndarray) -> np.ndarray:
+    classes, counts = np.unique(labels, return_counts=True)
+    count_map = dict(zip(classes, counts))
+    init_distribution = np.array([3/(4*count_map[1])]*count_map[1] + [1/(4*count_map[-1])]*count_map[-1])
+    return init_distribution
+
 def train_model(dataset_path: str, n: int = 5) -> None:
     """Train the model on a given dataset"""
 
@@ -22,7 +28,14 @@ def train_model(dataset_path: str, n: int = 5) -> None:
     train_matrix = load_file(dataset_path)
     Logger.info("Training the model")
     X, y = train_matrix[:, :-1], train_matrix[:, -1]
-    clf.fit(X, y)
+    _dist_3_4 = init_distribution(y)
+    def round_logging(clf: AdaBoost, round: int) -> None:
+        """Logs the status of reach round."""
+
+        Logger.info(f"Completing training for round {round}")
+        Logger.info(f"{clf.weak_est[-1].__dict__()}")
+    
+    clf.fit(X, y, _dist_3_4, round_call_back=round_logging)
     return clf
 
 
@@ -48,10 +61,6 @@ def train(dataset_path: str, output_path: str, num_of_est: int) -> None:
     IMAGE_DIR: Final = path.join(RESULT_DIR, f"{num_of_est}_round_images")
     TRAIN_PATH: Final = path.join(dataset_path, "train_data.csv")
     
-    clf: AdaBoost = train_model(TRAIN_PATH, num_of_est)
-    Logger.info("Saving the model")
-    clf.save(MODEL_PATH)
-
     if not path.exists(RESULT_DIR):
         Logger.info("Creating the result dir")
         mkdir(RESULT_DIR)
@@ -60,9 +69,14 @@ def train(dataset_path: str, output_path: str, num_of_est: int) -> None:
         Logger.info("Creating the image dir")
         mkdir(IMAGE_DIR)
     
+    clf: AdaBoost = train_model(TRAIN_PATH, num_of_est)
+    Logger.info("Saving the model")
+    clf.save(MODEL_PATH)
+
     Logger.info("Saving the feature images")
     features_image = generating_feature_image(clf)
     for i in range(num_of_est):
+        Logger.info(f"Saving the feature image for round {i+1}")
         image.imsave(f"{IMAGE_DIR}/{i}_round.png", features_image[i])
 
     Logger.info(f"All images are saved at {IMAGE_DIR}")

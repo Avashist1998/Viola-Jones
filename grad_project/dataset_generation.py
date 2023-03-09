@@ -63,11 +63,11 @@ def create_dataset(dataset_path: str, output_path: str) -> None:
     
     Logger.info("Starting the creation of train dataset")
     training_data_path = path.join(dataset_path, "trainset")
-    train_csv_filename = path.join(dataset_path, "train_data.csv")
+    train_csv_filename = path.join(output_path, "train_data.csv")
     Logger.info("Extracting train dataset Haar features...")
     train_df = create_feature_df(training_data_path)
     Logger.info("Saving train dataset...")
-    train_df.to_csv(output_path + "/train_data.csv", header=None, index=None, float_format="%10.5f")
+    train_df.to_csv(train_csv_filename, header=None, index=None, float_format="%10.5f")
     Logger.info(f"Train dataset is saved at {train_csv_filename}")
 
 
