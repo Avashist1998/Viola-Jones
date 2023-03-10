@@ -1,6 +1,8 @@
 [Paper](https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf) 
 
-# Viola-Jones_Algorithm
+
+# Viola-Jones
+
 This is an implementation of the Viola-Jones Algorithm in python3. The results of the original algorithm are improved using AdaBoost algorithm.
 
 # Environment Setup
