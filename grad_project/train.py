@@ -28,14 +28,13 @@ def train_model(dataset_path: str, n: int = 5) -> None:
     train_matrix = load_file(dataset_path)
     Logger.info("Training the model")
     X, y = train_matrix[:, :-1], train_matrix[:, -1]
-    _dist_3_4 = init_distribution(y)
     def round_logging(clf: AdaBoost, round: int) -> None:
         """Logs the status of reach round."""
 
         Logger.info(f"Completing training for round {round}")
         Logger.info(f"{clf.weak_est[-1].__dict__()}")
     
-    clf.fit(X, y, _dist_3_4, round_call_back=round_logging)
+    clf.fit(X, y, round_call_back=round_logging)
     return clf
 
 

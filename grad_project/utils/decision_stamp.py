@@ -4,8 +4,11 @@ from typing import Optional, Tuple, Dict
 from utils.classifier import Classifier
 
 class DecisionStamp(Classifier):
+    """Decision Stamp Classifier Definition."""
 
     def __init__(self):
+        """Initialize the DecisionStamp Object."""
+
         self.dist = None
         self.polarity = 1
         self.theta = float("inf")
@@ -13,6 +16,8 @@ class DecisionStamp(Classifier):
         self.weighted_error = float("inf")
 
     def __dict__(self) -> Dict[str, str]:
+        """Returns a dictionary representation of the object"""
+
         return {"feature_index": self.feature_index,
                 "theta": self.theta,
                 "polarity": self.polarity,
@@ -20,6 +25,7 @@ class DecisionStamp(Classifier):
 
     def set_params(self, **kwargs) -> "DecisionStamp":
         """Sets the parameters of the classifiers."""
+
         for parameter, value in kwargs.items():
             setattr(self, parameter, value)
         return self
@@ -37,15 +43,21 @@ class DecisionStamp(Classifier):
         return init_distribution
 
     def fit(self, X: np.ndarray, y: np.ndarray, dist: Optional[np.ndarray] = None):
+        """Train the model on the given input."""
+
         if dist is None:
             dist = DecisionStamp.init_distribution(y)
         self.dist = dist
         self.weighted_error, self.feature_index, self.theta = self._find_theta_and_f_star(X, y, dist)
 
-    def predict(self, X:np.ndarray) -> np.ndarray:
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        """Classify the data using the specified number of estimators."""
+
         return np.array([ 1 if x <= self.theta else -1 for x in X[:, self.feature_index]])*self.polarity
 
     def score(self, label, prediction):
+        """Returns the accuracy of the model for the given input."""
+
         same_check = lambda y1, y2: y1 == y2
         total = sum(map(same_check, label, prediction))
         score = total/len(list(label))

@@ -48,3 +48,28 @@ def decision_stamp_visualization(X: np.ndarray, y: np.ndarray, dist: np.ndarray,
     plt.xlabel(f"feature_index : {est.feature_index}")
     plt.ylabel("classification")
     plt.show()
+
+
+def draw_square(base_image: np.ndarray, i: int, y: int, w: int, h: int, line_thick: int) -> np.ndarray:
+    """Draws a square on the classification."""
+
+    dim = base_image.shape
+    return_image = base_image.copy()
+
+    if len(dim) == 3:
+        return_image[i:i+line_thick, y:y+w, 0] = 255
+        return_image[i:i+line_thick, y:y+w, 1:] = 0
+        return_image[i+h-line_thick:i+h, y:y+w, 0] = 255
+        return_image[i+h-line_thick:i+h, y:y+w, 1:] = 0
+        return_image[i:i+h, y:y+line_thick, 0] = 255
+        return_image[i:i+h, y:y+line_thick, 1:] = 0
+        return_image[i:i+h, y+w-line_thick:y+w, 0] = 255
+        return_image[i:i+h, y+w-line_thick:y+w, 1:] = 0
+    else:
+        red_max = int(255*0.299)
+        return_image[i:i+line_thick, y:y+w] = red_max
+        return_image[i+h-line_thick:i+h, y:y+w] = red_max
+        return_image[i:i+h, y:y+line_thick] = red_max
+        return_image[i:i+h, y+w-line_thick:y+w] = red_max
+
+    return return_image

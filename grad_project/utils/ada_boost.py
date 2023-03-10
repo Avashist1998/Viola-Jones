@@ -10,7 +10,7 @@ class AdaBoost(Classifier):
     """AdaBoost Classifier Definition."""
 
     def __init__(self, n: int = 5):
-        """Initialize the AdaBoost function."""
+        """Initialize the AdaBoost Object."""
 
         self.num_of_est = n
         self.alphas: List[float] = []
@@ -18,13 +18,15 @@ class AdaBoost(Classifier):
         self.weighted_errors: List[float] = []
         self.weak_est: List[DecisionStamp] = []
 
-    def _get_adjusted_dist(self, alpha: float, dist: np.array, y: np.ndarray, pred: np.ndarray):
+    def _get_adjusted_dist(self, alpha: float, dist: np.array, y: np.ndarray, pred: np.ndarray) -> np.ndarray:
         """Adjusted the dist for the next round."""
 
         dist = np.multiply(dist, np.exp(alpha * (y != pred)))
         return dist/np.sum(dist)
     
     def __dict__(self) -> Dict[str, str]:
+        """Returns a dictionary representation of the object"""
+
         return {
                 "num_of_est": self.num_of_est,
                 "alphas": self.alphas,
@@ -35,17 +37,20 @@ class AdaBoost(Classifier):
 
     def set_params(self, **kwargs) -> "AdaBoost":
         """Sets the parameters of the classifiers."""
+
         for parameter, value in kwargs.items():
             setattr(self, parameter, value)
         return self
 
     def save(self, file_path: str) -> None:
         """Save the AdaBoost model to a file."""
+
         with open(file_path, "w") as fp:
             dump(self.__dict__(), fp)
 
     def load(file_path: str) -> "AdaBoost":
         """Loads a AdaBoost Model from file."""
+
         data = {}
         with open(file_path, "r") as fp:
             data = load(fp)
@@ -56,6 +61,8 @@ class AdaBoost(Classifier):
         return AdaBoost().set_params(**data)
 
     def fit(self, X: np.ndarray, y: np.ndarray, dist: np.ndarray = None, /, round_call_back: Optional[Callable[["AdaBoost", int], None]] = None):
+        """Train the AdaBoost model on the given input."""
+
         if dist is None:
             dist = DecisionStamp.init_distribution(y)
 
@@ -76,7 +83,9 @@ class AdaBoost(Classifier):
             if round_call_back is not None:
                 round_call_back(self, i+1)
     
-    def score(self, X: np.ndarray, y: np.ndarray):
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
+        """Returns the accuracy of the model for the given input."""
+
         pred = self.predict(X)
         equality_check = lambda y1, y2: y1 == y2
         total = sum(map(equality_check, y, pred))
@@ -84,6 +93,8 @@ class AdaBoost(Classifier):
         return score
 
     def predict(self, X: np.ndarray, /, num_of_est: Optional[int] = None) -> np.ndarray:
+        """Classify the data using the specified number of estimators."""
+
         row, _ = X.shape
         sum_y_pred = np.zeros((row))
 
