@@ -12,7 +12,7 @@ from utils.logger import init_logger
 
 Logger: Final = init_logger(__name__)
 
-def create_feature_df(image_folder_path: str) -> pd.DataFrame: 
+def create_feature_df(image_folder_path: str) -> pd.DataFrame:
 
     face_data, non_face_data = np.array([[]]), np.array([[]])
     face_image_files = glob.glob(image_folder_path + "/faces/*.png")
@@ -48,7 +48,7 @@ def create_feature_df(image_folder_path: str) -> pd.DataFrame:
 
 
 def create_dataset(dataset_path: str, output_path: str) -> None:
-    
+
     if not path.exists(output_path):
         Logger.info("Creating Output directory")
         mkdir(output_path)
