@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from utils.ada_boost import AdaBoost
+from libs.ada_boost import AdaBoost
 
 
 class TestDecision(unittest.TestCase):

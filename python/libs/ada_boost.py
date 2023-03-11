@@ -2,8 +2,8 @@ import numpy as np
 from json import dump, load
 from typing import Dict, List, Callable, Optional
 
-from utils.classifier import Classifier
-from utils.decision_stamp import DecisionStamp
+from libs.classifier import Classifier
+from libs.decision_stamp import DecisionStamp
 
 
 class AdaBoost(Classifier):

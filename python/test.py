@@ -1,11 +1,11 @@
 import argparse
-from typing import Dict, Final, List
+from typing import Dict, Final
 from os import path, mkdir
 import numpy as np
 from json import dump
 
-from utils.ada_boost import AdaBoost
-from utils.logger import init_logger
+from libs.ada_boost import AdaBoost
+from libs.logger import init_logger
 
 Logger: Final = init_logger(__name__)
 

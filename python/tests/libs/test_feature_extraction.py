@@ -1,10 +1,10 @@
 import unittest
 import numpy as np
-from utils.feature_extraction import (get_sum_from_i_image, 
+from libs.feature_extraction import (get_sum_from_i_image, 
                                       get_integral_image, get_feature_values, 
                                       get_v_edge_feature, get_h_edge_feature,
                                       get_v_band_feature, get_h_band_feature,
-                                      get_slant_edge_feature,
+                                      get_slant_edge_feature, extract_i_image_features,
                                       extract_image_features)
 
 
@@ -120,19 +120,19 @@ class TestFeatureExtraction(unittest.TestCase):
             self.assertEqual(get_feature_values(
                 19, 19, key), self.expected_feature_val[key])
 
-    def test_extract_image_features(self):
-        """Test the extract_image_feature methods."""
+    def test_extract_i_image_features(self):
+        """Test the extract_i_image_feature methods."""
 
-        features = extract_image_features(self.test_image)
-        self.assertEqual(features[25], 3)
+        features = extract_i_image_features(self.test_i_image)
+        self.assertEqual(features[25], 187)
         self.assertEqual(features[64], 4)
-        self.assertEqual(features[87], -2)
-        self.assertEqual(features[164], 2)
-        self.assertEqual(features[218], 9)
-        self.assertEqual(features[318], 271)
-        self.assertEqual(len(features), 453)
+        self.assertEqual(features[87], 40)
+        self.assertEqual(features[164], 64)
+        self.assertEqual(features[218], 13)
+        self.assertEqual(features[318], -107)
+        self.assertEqual(len(features), 5025)
 
-    def test_extract_all_features(self):
+    def test_extract_image_features(self):
         """Test the extract_image_feature methods for all values for test image."""
 
         image = self.test_image

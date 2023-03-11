@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from utils.decision_stamp import DecisionStamp
+from libs.decision_stamp import DecisionStamp
 
 
 class TestDecision(unittest.TestCase):

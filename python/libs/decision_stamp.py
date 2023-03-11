@@ -1,7 +1,7 @@
 import numpy as np
 from json import dump
 from typing import Optional, Tuple, Dict
-from utils.classifier import Classifier
+from libs.classifier import Classifier
 
 class DecisionStamp(Classifier):
     """Decision Stamp Classifier Definition."""

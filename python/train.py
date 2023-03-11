@@ -5,9 +5,9 @@ from matplotlib import image
 import imageio.v2 as imageio
 from typing import Final, List
 
-from utils.visualization import draw_feature
-from utils.ada_boost import AdaBoost
-from utils.logger import init_logger
+from libs.ada_boost import AdaBoost
+from libs.logger import init_logger
+from libs.visualization import draw_feature
 
 Logger: Final = init_logger(__name__)
 

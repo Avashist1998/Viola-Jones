@@ -116,6 +116,7 @@ def extract_i_image_features(i_image: np.ndarray) -> List[int]:
                 for j in range(width_limit):
                     feature_val.append(get_slant_edge_feature(
                         i, j, feature_width, feature_height, i_image))
+    return feature_val
 
 
 def extract_image_features(image: np.ndarray) -> List[int]:

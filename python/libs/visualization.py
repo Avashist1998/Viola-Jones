@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils.decision_stamp import DecisionStamp
-from utils.feature_extraction import get_feature_values
+from libs.decision_stamp import DecisionStamp
+from libs.feature_extraction import get_feature_values
 
 
 def draw_feature(base_image: np.ndarray, feature_index: int) -> np.ndarray:
