@@ -1,12 +1,9 @@
 import argparse
-import glob 
-from typing import Final, List
-from os import path, mkdir
 import numpy as np
-import pandas as pd
-import imageio.v2 as imageio
-
+from os import path, mkdir
 from matplotlib import image
+import imageio.v2 as imageio
+from typing import Final, List
 
 from utils.visualization import draw_feature
 from utils.ada_boost import AdaBoost

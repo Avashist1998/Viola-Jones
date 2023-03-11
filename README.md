@@ -2,8 +2,7 @@
 
 
 # Viola-Jones
-
-This is an implementation of the Viola-Jones Algorithm in python3. The results of the original algorithm are improved using AdaBoost algorithm.
+This is a Python 3 implementation of the Viola-Jones Algorithm presented in the paper above. The algorithm uses tradition image features to find face in an image with small number of instructions. Making it perfect for low power and real time classification application. The application has been developed feature but the paper has been a fundamental for the fields of machine learning and computer vision.
 
 # Environment Setup
 
@@ -15,12 +14,20 @@ If someone is running the code on a windows machine. They will have to change th
 
 # Creating Dataset
 
-`python3 grad_project/dataset_generation.py -d dataset/ -o .dataset/`
+`python3 python/dataset_generation.py -d dataset/ -o .dataset/`
+
+# Training the AdaBoost model
+
+`python3 python/train.py -d .dataset/ -o results/ -n 100`
+
+The results contain model in a json format including the decision stamp data and images of the features used to classify the model. 
+
+# Testing the AdaBoost model
+
+`python3 python/train.py -d .dataset/ -m results/100_round_model.json  -o results/`
 
 # Files Information
 
-`main.py` used to plot the error extracting the features 
-`displaying_features.py` used to display the Haar features on a default image
-`ada_boost.py` perform the AdaBoost algorithm on the data and outputs the best features and their respective threshold to a file
-`Modified_Ada_boost.py` AdaBoost implementation with gamma parameter modification enabled criteria.
-
+`dataset_generation.py` used to generate the dataset csv from the the image dataset
+`train.py` train the model for `n` number of rounds on a given dataset and save the model to a given output path.
+`test.py` used to test the model on a test set and store the resulting statistics for a given dataset.

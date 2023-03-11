@@ -8,6 +8,9 @@
 .DS_Store/
 .DS_Store?
 
+# nohup logs
+nohup.out
+
 ## Python enviornment
 env
 __pycache__
@@ -42,7 +45,6 @@ dist-ssr
 
 
 # Added by cargo
-
 my-crate/target
 my-crate/Cargo.lock
 /target
